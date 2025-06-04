@@ -1,70 +1,293 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-<meta charset="UTF-8">
-<title>EasyWeb Hra</title>
-<style>
- body{
-     margin:0;
-     font-family:Arial,Helvetica,sans-serif;
-     color:#333;
-     background:linear-gradient(120deg,#f0f0f0,#d1e0ff);
-     min-height:100vh;
-     display:flex;
-     flex-direction:column;
- }
- header{
-     text-align:center;
-     padding:60px 20px;
- }
- h1{
-     font-size:3em;
-     margin-bottom:0.2em;
- }
- p.lead{
-     font-size:1.2em;
-     margin-top:0;
- }
- main{
-     flex:1;
-     display:flex;
-     flex-direction:column;
-     justify-content:center;
-     align-items:center;
- }
- .start-btn{
-     display:inline-block;
-     padding:15px 30px;
-     font-size:1.2em;
-     background:#007BFF;
-     color:#fff;
-     border:none;
-     border-radius:4px;
-     cursor:pointer;
-     text-decoration:none;
-     transition:background 0.3s ease;
- }
- .start-btn:hover{
-     background:#0056b3;
- }
- footer{
-     text-align:center;
-     padding:20px;
-     font-size:0.9em;
-     color:#666;
- }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Název Tvé Hry</title>
+    <style>
+        :root{
+            --primary:#1e3a8a;
+            --secondary:#60a5fa;
+            --accent:#f97316;
+            --text:#333;
+            --bg:#f9fafb;
+        }
+        *{box-sizing:border-box;}
+        html{scroll-behavior:smooth;}
+        body{
+            margin:0;
+            font-family:'Segoe UI', Tahoma, sans-serif;
+            color:var(--text);
+            background:var(--bg);
+            display:flex;
+        }
+        /* Sidebar */
+        #sidebar{
+            width:250px;
+            background:#fff;
+            position:fixed;
+            top:0;left:0;bottom:0;
+            padding:1rem;
+            box-shadow:2px 0 5px rgba(0,0,0,0.1);
+            transform:translateX(0);
+            transition:transform 0.3s ease;
+            z-index:1000;
+        }
+        #sidebar h2{margin-top:0;color:var(--primary);}
+        #sidebar nav a{
+            display:block;
+            padding:0.5rem 0;
+            color:var(--text);
+            text-decoration:none;
+            position:relative;
+            transition:color 0.3s;
+        }
+        #sidebar nav a::after{
+            content:"";
+            position:absolute;
+            left:0;bottom:0;
+            width:0;height:2px;
+            background:var(--accent);
+            transition:width 0.3s;
+        }
+        #sidebar nav a:hover{color:var(--accent);}
+        #sidebar nav a:hover::after{width:100%;}
+        #sidebar .social{
+            margin-top:2rem;
+            display:flex;
+            gap:0.5rem;
+        }
+        #sidebar .social svg{
+            width:24px;height:24px;
+            fill:var(--secondary);
+            transition:transform 0.3s;
+            cursor:pointer;
+        }
+        #sidebar .social svg:hover{transform:scale(1.2);}
+        #close-btn{
+            display:none;
+            cursor:pointer;
+            font-size:1.5rem;
+            margin-bottom:1rem;
+            color:var(--accent);
+        }
+        /* Overlay */
+        #overlay{
+            position:fixed;
+            inset:0;
+            background:rgba(0,0,0,0.4);
+            opacity:0;
+            visibility:hidden;
+            transition:opacity 0.3s;
+            z-index:900;
+        }
+        #overlay.active{opacity:1;visibility:visible;}
+        /* Top bar */
+        #topbar{
+            position:fixed;
+            top:0;left:0;right:0;
+            background:#fff;
+            display:none;
+            align-items:center;
+            justify-content:space-between;
+            padding:0.5rem 1rem;
+            box-shadow:0 2px 5px rgba(0,0,0,0.1);
+            z-index:950;
+        }
+        #menu-btn{font-size:1.5rem;cursor:pointer;color:var(--primary);}
+        /* Main content */
+        .content{flex:1;margin-left:250px;}
+        @media(max-width:768px){
+            #sidebar{transform:translateX(-100%);}
+            #sidebar.open{transform:translateX(0);}
+            #close-btn{display:block;}
+            #topbar{display:flex;}
+            .content{margin-left:0;}
+        }
+        /* Hero section */
+        .hero{
+            height:100vh;
+            display:flex;
+            flex-direction:column;
+            justify-content:center;
+            align-items:center;
+            text-align:center;
+            color:#fff;
+            position:relative;
+            overflow:hidden;
+        }
+        @keyframes bgGradient{
+            0%{background-position:0% 50%;}
+            50%{background-position:100% 50%;}
+            100%{background-position:0% 50%;}
+        }
+        .hero::before{
+            content:"";
+            position:absolute;
+            inset:0;
+            background:linear-gradient(-45deg,var(--primary),var(--secondary),var(--accent),var(--secondary));
+            background-size:400% 400%;
+            animation:bgGradient 15s ease infinite;
+            z-index:-1;
+        }
+        .hero h1{font-size:3rem;margin:0;opacity:0;transform:translateY(20px);transition:all 1s ease 0.3s;}
+        .hero p{font-size:1.3rem;opacity:0;transform:translateY(20px);transition:all 1s ease 0.6s;}
+        .hero .cta{
+            margin-top:2rem;
+            padding:1rem 2rem;
+            font-size:1.2rem;
+            background:var(--accent);
+            color:#fff;
+            border:none;
+            border-radius:5px;
+            cursor:pointer;
+            text-decoration:none;
+            opacity:0;
+            transform:translateY(-20px);
+            transition:background 0.3s, box-shadow 0.3s, transform 0.5s ease 0.9s, opacity 0.5s ease 0.9s;
+        }
+        .hero .cta:hover{
+            background:#c0560b;
+            box-shadow:0 4px 8px rgba(0,0,0,0.3);
+        }
+        .hero.loaded h1,.hero.loaded p,.hero.loaded .cta{opacity:1;transform:translateY(0);}
+        .hero.loaded .cta{animation:bounce 2s infinite 2s;}
+        @keyframes bounce{
+            0%,20%,60%,100%{transform:translateY(0);}
+            40%{transform:translateY(-10px);}
+            80%{transform:translateY(-5px);}
+        }
+        /* Sections */
+        section{padding:4rem 1rem;max-width:1000px;margin:0 auto;}
+        section h2{font-size:2rem;text-align:center;margin-bottom:2rem;opacity:0;transform:translateY(20px);transition:all 1s;}
+        section.visible h2{opacity:1;transform:translateY(0);}
+        /* About */
+        #about .features{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1.5rem;text-align:center;}
+        #about .feature{
+            padding:1rem;border-radius:8px;background:#fff;box-shadow:0 2px 5px rgba(0,0,0,0.1);
+            transition:transform 0.3s;
+        }
+        #about .feature:hover{transform:scale(1.05) rotate(2deg);}
+        #about .feature svg{width:40px;height:40px;fill:var(--secondary);margin-bottom:0.5rem;}
+        /* Gallery */
+        #gallery .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;}
+        #gallery .grid-item{position:relative;overflow:hidden;border-radius:8px;}
+        #gallery .grid-item img{width:100%;height:100%;object-fit:cover;transition:transform 0.5s;}
+        #gallery .grid-item:hover img{transform:scale(1.1);}
+        #gallery .grid-item .label{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,0.6);color:#fff;padding:0.5rem;text-align:center;opacity:0;transition:opacity 0.3s;}
+        #gallery .grid-item:hover .label{opacity:1;}
+        /* Contact */
+        #contact form{display:flex;flex-direction:column;gap:1rem;max-width:400px;margin:0 auto;}
+        #contact input[type="text"],#contact input[type="email"]{padding:0.5rem;font-size:1rem;border:1px solid #ccc;border-radius:4px;}
+        #contact button{padding:0.75rem;background:var(--primary);color:#fff;border:none;border-radius:4px;cursor:pointer;transition:background 0.3s;}
+        #contact button:hover{background:#162b5c;}
+        #contact .links{margin-top:2rem;text-align:center;}
+        #contact .links svg{width:30px;height:30px;margin:0 0.5rem;fill:var(--primary);transition:transform 0.3s;cursor:pointer;}
+        #contact .links svg:hover{transform:scale(1.2);}        
+        footer{border-top:1px solid #ddd;padding:1rem 0;font-size:0.9rem;color:#666;text-align:center;}
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded',()=>{
+            const hero=document.querySelector('.hero');
+            setTimeout(()=>hero.classList.add('loaded'),100);
+
+            const menuBtn=document.querySelector('#menu-btn');
+            const closeBtn=document.querySelector('#close-btn');
+            const sidebar=document.querySelector('#sidebar');
+            const overlay=document.querySelector('#overlay');
+
+            menuBtn.addEventListener('click',()=>{sidebar.classList.add('open');overlay.classList.add('active');});
+            closeBtn.addEventListener('click',()=>{sidebar.classList.remove('open');overlay.classList.remove('active');});
+            overlay.addEventListener('click',()=>{sidebar.classList.remove('open');overlay.classList.remove('active');});
+
+            document.querySelectorAll('a[href^="#"]').forEach(anchor=>{
+                anchor.addEventListener('click',function(e){e.preventDefault();document.querySelector(this.getAttribute('href')).scrollIntoView({behavior:'smooth'});if(sidebar.classList.contains('open')){sidebar.classList.remove('open');overlay.classList.remove('active');}});
+            });
+
+            const observer=new IntersectionObserver(entries=>{
+                entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('visible');}});
+            },{threshold:0.1});
+            document.querySelectorAll('section').forEach(sec=>observer.observe(sec));
+        });
+    </script>
 </head>
 <body>
-<header>
-    <h1>Vítejte v EasyWeb</h1>
-    <p class="lead">Připravili jsme pro vás dynamickou 2D akční hru. Stačí kliknout na tlačítko níže a ponořit se do dobrodružství.</p>
-</header>
-<main>
-    <a href="action_game.html" class="start-btn">Spustit hru</a>
-</main>
-<footer>
-    &copy; 2025 EasyWeb
-</footer>
+    <div id="sidebar">
+        <div id="close-btn">× Zavřít</div>
+        <h2>Název Hry</h2>
+        <nav>
+            <a href="#about">O hře</a>
+            <a href="#gallery">Galerie</a>
+            <a href="#contact">Kontakt</a>
+        </nav>
+        <div class="social">
+            <svg viewBox="0 0 24 24"><path d="M22.46 6c-.77.35-1.6.58-2.46.69a4.2 4.2 0 001.85-2.31 8.3 8.3 0 01-2.64 1A4.15 4.15 0 0016.11 4c-2.34 0-4.23 1.9-4.23 4.24 0 .33.04.65.1.96-3.52-.18-6.65-1.86-8.74-4.42a4.28 4.28 0 00-.57 2.14 4.25 4.25 0 001.89 3.54 4.16 4.16 0 01-1.92-.53v.05c0 2.07 1.47 3.8 3.42 4.19a4.2 4.2 0 01-1.9.07 4.23 4.23 0 003.95 2.94A8.34 8.34 0 012 19.54a11.77 11.77 0 006.29 1.84c7.55 0 11.68-6.26 11.68-11.68 0-.18 0-.35-.01-.53A8.36 8.36 0 0024 6.6a8.2 8.2 0 01-2.54.7z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2.04c-5.5 0-9.96 4.46-9.96 9.96 0 4.4 3.6 8.06 8.21 8.96v-6.34H7.9v-2.62h2.35V9.58c0-2.3 1.37-3.58 3.47-3.58.99 0 2.03.18 2.03.18v2.22h-1.14c-1.12 0-1.47.69-1.47 1.39v1.67h2.5l-.4 2.62h-2.1v6.34c4.6-.9 8.2-4.56 8.2-8.96 0-5.5-4.46-9.96-9.96-9.96z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M21 21h-4.5v-6c0-1.43-.03-3.27-2-3.27-2 0-2.3 1.57-2.3 3.17V21H8V9h4.3v1.64h.06c.6-1.1 2-2.26 4.09-2.26 4.37 0 5.18 2.88 5.18 6.62V21zM5 8H1V9h4v12h3V9h4V8H5z"/></svg>
+        </div>
+    </div>
+    <div id="overlay"></div>
+    <div id="topbar"><div>Název Hry</div><div id="menu-btn">☰ Menu</div></div>
+    <div class="content">
+        <section class="hero">
+            <h1>Název Tvé Hry</h1>
+            <p>Krátký chytlavý slogan</p>
+            <a href="game.html" class="cta">Spustit hru</a>
+        </section>
+        <section id="about">
+            <h2>O hře</h2>
+            <div class="features">
+                <div class="feature">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>
+                    <p>2D akce</p>
+                </div>
+                <div class="feature">
+                    <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16"/></svg>
+                    <p>Zvukové efekty</p>
+                </div>
+                <div class="feature">
+                    <svg viewBox="0 0 24 24"><polygon points="12,2 22,22 2,22"/></svg>
+                    <p>Unikátní grafika</p>
+                </div>
+            </div>
+        </section>
+        <section id="gallery">
+            <h2>Galerie</h2>
+            <div class="grid">
+                <div class="grid-item">
+                    <img src="https://via.placeholder.com/400x250?text=Level+1" alt="level1"/>
+                    <div class="label">Úroveň 1</div>
+                </div>
+                <div class="grid-item">
+                    <img src="https://via.placeholder.com/400x250?text=Level+2" alt="level2"/>
+                    <div class="label">Úroveň 2</div>
+                </div>
+                <div class="grid-item">
+                    <img src="https://via.placeholder.com/400x250?text=Level+3" alt="level3"/>
+                    <div class="label">Úroveň 3</div>
+                </div>
+                <div class="grid-item">
+                    <img src="https://via.placeholder.com/400x250?text=Level+4" alt="level4"/>
+                    <div class="label">Úroveň 4</div>
+                </div>
+            </div>
+        </section>
+        <section id="contact">
+            <h2>Kontakt</h2>
+            <form>
+                <input type="text" placeholder="Jméno" required>
+                <input type="email" placeholder="Email" required>
+                <button type="submit">Odeslat</button>
+            </form>
+            <div class="links">
+                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm1-13h-2v6h2V7zm0 8h-2v2h2v-2z"/></svg>
+                <svg viewBox="0 0 24 24"><path d="M10.9 2.1c-4.86 0-8.8 3.94-8.8 8.8 0 3.89 2.52 7.18 6.02 8.27.44.08.6-.19.6-.42v-1.48c-2.45.53-2.96-1.18-2.96-1.18-.4-1.02-.98-1.29-.98-1.29-.8-.55.06-.54.06-.54.89.06 1.35.92 1.35.92.79 1.34 2.07.95 2.58.73.08-.57.31-.95.56-1.17-1.95-.22-4-1-4-4.44 0-.98.35-1.78.92-2.4-.09-.23-.4-1.15.09-2.39 0 0 .74-.24 2.42.92.7-.19 1.46-.28 2.21-.28s1.51.09 2.21.28c1.68-1.16 2.42-.92 2.42-.92.49 1.24.18 2.16.09 2.39.57.62.92 1.42.92 2.4 0 3.45-2.05 4.22-4 4.44.32.28.6.82.6 1.66v2.46c0 .23.16.5.6.42a8.81 8.81 0 006.01-8.27c0-4.86-3.94-8.8-8.8-8.8z"/></svg>
+                <svg viewBox="0 0 24 24"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.09 3.29 9.42 7.87 10.95.58.11.79-.25.79-.55v-1.94c-3.21.7-3.88-1.55-3.88-1.55-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.02 1.75 2.68 1.25 3.33.95.1-.74.4-1.25.72-1.54-2.56-.29-5.27-1.28-5.27-5.73 0-1.27.46-2.3 1.21-3.11-.12-.3-.53-1.53.1-3.18 0 0 1-.32 3.3 1.19a11.34 11.34 0 016 0c2.3-1.5 3.3-1.19 3.3-1.19.63 1.65.22 2.88.1 3.18.76.81 1.22 1.84 1.22 3.11 0 4.46-2.72 5.43-5.3 5.71.41.36.78 1.1.78 2.22v3.29c0 .3.2.66.8.55A10.52 10.52 0 0023.5 12c0-6.35-5.15-11.5-11.5-11.5z"/></svg>
+            </div>
+        </section>
+        <footer>
+            &copy; 2025 Tvé Jméno. Všechna práva vyhrazena. | <a href="https://github.com/tuv-repo" target="_blank">GitHub</a>
+        </footer>
+    </div>
 </body>
 </html>
