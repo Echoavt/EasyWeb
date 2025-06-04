@@ -2,89 +2,69 @@
 <html lang="cs">
 <head>
 <meta charset="UTF-8">
-<title>Akční 2D Hra</title>
+<title>EasyWeb Hra</title>
 <style>
-html,body{margin:0;height:100%;overflow:hidden;background:#000;font-family:sans-serif;}
-canvas{display:block;margin:0 auto;background:#000;}
-#overlay{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;justify-content:center;align-items:center;color:#fff;font-size:48px;font-weight:bold;text-shadow:2px 2px 4px #000;pointer-events:none;}
+ body{
+     margin:0;
+     font-family:Arial,Helvetica,sans-serif;
+     color:#333;
+     background:linear-gradient(120deg,#f0f0f0,#d1e0ff);
+     min-height:100vh;
+     display:flex;
+     flex-direction:column;
+ }
+ header{
+     text-align:center;
+     padding:60px 20px;
+ }
+ h1{
+     font-size:3em;
+     margin-bottom:0.2em;
+ }
+ p.lead{
+     font-size:1.2em;
+     margin-top:0;
+ }
+ main{
+     flex:1;
+     display:flex;
+     flex-direction:column;
+     justify-content:center;
+     align-items:center;
+ }
+ .start-btn{
+     display:inline-block;
+     padding:15px 30px;
+     font-size:1.2em;
+     background:#007BFF;
+     color:#fff;
+     border:none;
+     border-radius:4px;
+     cursor:pointer;
+     text-decoration:none;
+     transition:background 0.3s ease;
+ }
+ .start-btn:hover{
+     background:#0056b3;
+ }
+ footer{
+     text-align:center;
+     padding:20px;
+     font-size:0.9em;
+     color:#666;
+ }
 </style>
 </head>
 <body>
-<canvas id="gameCanvas" width="800" height="600"></canvas>
-<div id="overlay"></div>
-<script>
-const canvas=document.getElementById('gameCanvas');
-const ctx=canvas.getContext('2d');
-const overlay=document.getElementById('overlay');
-const WIDTH=canvas.width,HEIGHT=canvas.height;
-let lastTime=0;
-let gameState='play';
-let levelIndex=0;
-let score=0;let lives=3;let mute=false;
-const keys={};
-const sounds={};
-function loadSounds(){
- sounds.jump=new Audio('data:audio/wav;base64,'+
-'UklGRkQDAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YSADAAAAAFsrllErbrp9a34pcKVUHi8FBHPYjbHukxeDBIH1jWKoK83397UjO0vcafl7bX/Qc4FafzYLDCzgD7hzmBeFQoCIirKi5cX27+sblUQjZbt57n8BdwJgqT0FFAXo2b5hnZOHAYCTh2Gd2b4F6AUUqT0CYAF37n+7eSNllUTrG/bv5cWyooiKQoAXhXOYD7gs4AsMfzaBWtBzbX/5e9xpO0u1I/f3K81iqPWNBIEXg+6TjbFz2AUEHi+lVClwa366fStullFbKwAApdRqrtWRRoKVgdePW6vi0Pv7jSdzThJs6Xz8fgtynlfVMgkIS9zFtCSWB4STgDCMf6WByfXz1B/xR41n6Xq+f3h1Tl0bOgoQFeRru92aRYYSgP+I/p9Xwvvr+xcnQZ9ibXj/f214n2InQfsX++tXwv6f/4gSgEWG3ZpruxXkChAbOk5deHW+f+l6jWfxR9Qf9fOByX+lMIyTgAeEJJbFtEvcCQjVMp5XC3L8ful8EmxzTo0n+/vi0Fur14+VgUaC1ZFqrqXUAABbK5ZRK266fWt+KXClVB4vBQRz2I2x7pMXgwSB9Y1iqCvN9/e1IztL3Gn5e21/0HOBWn82Cwws4A+4c5gXhUKAiIqyouXF9u/rG5VEI2W7ee5/AXcCYKk9BRQF6Nm+YZ2ThwGAk4dhndm+BegFFKk9AmABd+5/u3kjZZVE6xv27+XFsqKIikKAF4VzmA+4LOALDH82gVrQc21/+XvcaTtLtSP39yvNYqj1jQSBF4Puk42xc9gFBB4vpVQpcGt+un0rbpZRWysAAKXUaq7VkUaClYHXj1ur4tD7+40nc04SbOl8/H4Lcp5X1TIJCEvcxbQklgeEk4AwjH+lgcn189Qf8UeNZ+l6vn94dU5dGzoKEBXka7vdmkWGEoD/iP6fV8L76/sXJ0GfYm14/39teJ9iJ0H7F/vrV8L+n/+IEoBFht2aa7sV5AoQGzpOXXh1vn/peo1n8UfUH/Xzgcl/pTCMk4AHhCSWxbRL3AkI1TKeVwty/H7pfBJsc06NJ/v74tBbq9ePlYFGgtWRaq6l1A==');
- sounds.shoot=new Audio('data:audio/wav;base64,'+
-'UklGRkQDAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YSADAAAAAJZRun0pcB4vc9jukwSBYqj39ztL+XvQc382LOBzmEKAsqL275VEu3kBd6k9BehhnQGAYZ0F6Kk9AXe7eZVE9u+yokKAc5gs4H820HP5eztL9/diqASB7pNz2B4vKXC6fZZRAABqrkaC14/i0I0nEmz8fp5XCQjFtAeEMIyBydQfjWe+f05dChBru0WG/4hXwvsXn2L/f59i+xdXwv+IRYZruwoQTl2+f41n1B+ByTCMB4TFtAkInlf8fhJsjSfi0NePRoJqrgAAllG6fSlwHi9z2O6TBIFiqPf3O0v5e9BzfzYs4HOYQoCyovbvlUS7eQF3qT0F6GGdAYBhnQXoqT0Bd7t5lUT277KiQoBzmCzgfzbQc/l7O0v392KoBIHuk3PYHi8pcLp9llEAAGquRoLXj+LQjScSbPx+nlcJCMW0B4QwjIHJ1B+NZ75/Tl0KEGu7RYb/iFfC+xefYv9/n2L7F1fC/4hFhmu7ChBOXb5/jWfUH4HJMIwHhMW0CQieV/x+EmyNJ+LQ149GgmquAACWUbp9KXAeL3PY7pMEgWKo9/c7S/l70HN/Nizgc5hCgLK9u+VRLt5AXepPQXoYZ0BgGGdBeipPQF3u3mVRPbvsqJCgHOYLOB/NtBz+Xs7S/f3YqgEge6Tc9geLylwun2WUQAAaq5GgteP4tCNJxJs/H6eVwkIxbQHhDCMgcnUH41nvn9OXQoQa7tFhv+IV8L7F59i/3+fYvsXV8L/iEWGa7sKEE5dvn+NZ9QfgckwjAeExbQJCJ5X/H4SbI0n4tDXj0aCaq4AAJZRun0pcB4vc9jukwSBYqj39ztL+XvQc382LOBzmEKAsqL275VEu3kBd6k9BehhnQGAYZ0F6Kk9AXe7eZVE9u+yokKAc5gs4H820HP5eztL9/diqASB7pNz2B4vKXC6fZZRAABqrkaC14/i0I0nEmz8fp5XCQjFtAeEMIyBydQfjWe+f05dChBru0WG/4hXwvsXn2L/f59i+xdXwv+IRYZruwoQTl2+f41n1B+ByTCMB4TFtAkInlf8fhJsjSfi0NePRoJqrg==');
- sounds.boom=new Audio('data:audio/wav;base64,'+
-'UklGRoQEAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YWAEAAAAAAEWWytqP5ZRVGErbrt3un36f2t+GHkpcORjpVTgQh4v9BkFBPjtc9gcxI2xVaHuk8CJF4MmgASBqoX1jaWZYqi7uSvNH+L39wsOtSNPODtL6lvcaad0+XuZf21/dXvQc7hogVqZSX82xiELDPb1LOBUyw+47qZzmA+NF4XHgEKAi4OIigaVsqIns+XFXtr27wcG6xv7MJVEJFYjZR5xu3m4fu5/Vn0BdyJtAmAHUKk9dSkFFP79BejC0tm+4KxhndKQk4fpgQGA6YGTh9KQYZ3grNm+wtIF6P79BRR1Kak9B1ACYCJtAXdWfe5/uH67eR5xI2UkVpVE+zDrGwcG9u9e2uXFJ7OyogaViIqLg0KAx4AXhQ+Nc5jupg+4VMss4Pb1CwzGIX82mUmBWrho0HN1e21/mX/5e6d03GnqWztLTzi1IwsO9/cf4ivNu7liqKWZ9Y2qhQSBJoAXg8CJ7pNVoY2xHMRz2PjtBQT0GR4v4EKlVORjKXAYeWt++n+6fbt3K25UYZZRaj9bKwEWAAD/6aXUlsBqrqye1ZFFiEaCBoCVgeiG148cnFurIL3i0Azm+/sIEo0n5DtzTqteEmxAdul82n/8flZ6C3JbZp5XRUbVMuEdCQj18UvcscfFtBakJJZZiweEZ4CTgIuEMIxIl3+lZ7aByTre9fMKCtQfrDTxRxJZjWfxcul6OX++f3V8eHX6ak5d2UwbOqIlChD5+RXkBc9ru9yp3ZrijkWGSIESgKqC/4jekv6f+a9XwovW++sCAvsXPi0nQSBTn2Iub214F37/fxd+bXgub59iIFMnQT4t+xcCAvvri9ZXwvmv/p/ekv+IqoISgEiBRYbijt2a3KlruwXPFeT5+QoQoiUbOtlMTl36anh1dXy+fzl/6Xrxco1nElnxR6w01B8KCvXzOt6ByWe2f6VIlzCMi4STgGeAB4RZiySWFqTFtLHHS9z18QkI4R3VMkVGnldbZgtyVnr8ftp/6XxAdhJsq15zTuQ7jScIEvv7DObi0CC9W6scnNeP6IaVgQaARoJFiNWRrJ5qrpbApdT/6QAAARZbK2o/llFUYStuu3e6ffp/a34YeSlw5GOlVOBCHi/0GQUE+O1z2BzEjbFVoe6TwIkXgyaABIGqhfWNpZliqLu5K80f4vf3Cw61I084O0vqW9xpp3T5e5l/bX91e9BzuGiBWplJfzbGIQsM9vUs4FTLD7jupnOYD40XhceAQoCLg4iKBpWyoiez5cVe2vbvBwbrG/swlUQkViNlHnG7ebh+7n9WfQF3Im0CYAdQqT11KQUU/v0F6MLS2b7grGGd0pCTh+mBAYDpgZOH0pBhneCs2b7C0gXo/v0FFHUpqT0HUAJgIm0Bd1Z97n+4frt5HnEjZSRWlUT7MOsbBwb2717a5cUns7KiBpWIiouDQoDHgBeFD41zmO6mD7hUyyzg9vULDMYhfzaZSYFauGjQc3V7bX+Zf/l7p3Tcaepb');
- sounds.ouch=new Audio('data:audio/wav;base64,'+
-'UklGRoQEAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YWAEAAAAAM0gaj/LWStuMHv6fzh8KXCdXOBCrCQFBBrjHMQeqe6T94UmgN+C9Y2poLu5ftf39/gYTzjjU9xpxHiZf+l90HP6YZlJTSwLDP3qVMsxr3OYoYjHgG6BiIp8myez88/27wkR+zCnTSNl3XW4fht/AXf0ZgdQwTMFFPXywtKVtWGdw4vpgXyAk4e1luCsmcgF6AoJdSkcRwJgf3JWfc1/u3mHayRWADvrG/r6XtpFvLKiW4+LgwuAF4VYku6mdsEs4AEBxiFJQIFarm51e/1/+Xutb+pbBEK1IwMDH+I5w2KoZZOqhRuAF4NrjlWhkrpz2Pj49Bk2OaVUbGoYea1/un1hc1RhxkhbKwsL/+lqymqu3ZdFiKyAlYHwihyc9bPi0PXwCBLoMXNOv2VAdtt+/H6idltmPU/VMgcT9fHS0cW0vpxZi76Bk4Drh0iXpK2ByQLpCgpoKvFHrGDxcol9vn9qefpqZVUbOvAa+flo2Wu7A6LijlCDEoBfhd6Sp6dXwiXhAgK+IidBN1sub7h7/3+4ey5vN1snQb4iAgIl4VfCp6fekl+FEoBQg+KOA6Jru2jZ+fnwGhs6ZVX6amp5vn+JffFyrGDxR2gqCgoC6YHJpK1Il+uHk4C+gVmLvpzFtNLR9fEHE9UyPU9bZqJ2/H7bfkB2v2VzTugxCBL18OLQ9bMcnPCKlYGsgEWI3ZdqrmrK/+kLC1srxkhUYWFzun2tfxh5bGqlVDY59Bn4+HPYkrpVoWuOF4MbgKqFZZNiqDnDH+IDA7UjBELqW61v+Xv9f3V7rm6BWklAxiEBASzgdsHupliSF4ULgIuDW4+yokW8Xtr6+usbADskVodru3nNf1Z9f3ICYBxHdSkKCQXomcjgrLWWk4d8gOmBw4thnZW1wtL18gUUwTMHUPRmAXcbf7h+3XUjZadN+zAJEfbv888ns3ybiIpugceAoYhzmDGvVMv96gsMTSyZSfph0HPpfZl/xHjcaeNTTzj4GPf3fte7uamg9Y3fgiaA94Xukx6pHMQa4wUErCTgQp1cKXA4fPp/MHsrbstZaj/NIAAAM9+WwDWm1ZHQhAaAyIPXj2OjIL1U2/v75hzkO+JWEmwJetp/IX0LcldfRUaCKAkICOexxx2sJJY8h2eAF4IwjAaeZ7az0/XzAxWsNM9QjWdfdzl/kn54dYRk2UwNMAoQ9+4Fz1my3ZojikiB5YD/iAyZ+a8/zPvrCw0+LWtKn2I9dBd+hH9teEtpIFNnN/sX9vaL1uS4/p+BjaqCM4BFhnmU3KkAxRXkBgWiJbtDTl2lcHV89X/peqhtElmKPtQf//463re/f6VSkYuEA4AHhFOQFqT8vUvc/fzhHcc8nlebbFZ65X/pfJVxq15uRY0nCAcM5srGW6uUleiGU4BGgp+MrJ46t6XU9fQBFpY1llEjaLt3VH9rfhB15GMLTB4vCw/47RjOjbFBmsCJJYEEgV6JpZnDsCvN+ewLDi4u');
-}
-class Rect{constructor(x,y,w,h){this.x=x;this.y=y;this.w=w;this.h=h;}}
-class Platform extends Rect{constructor(x,y,w,h,dx=0,dy=0,range=0){super(x,y,w,h);this.dx=dx;this.dy=dy;this.range=range;this.startX=x;this.startY=y;}
- update(){if(this.range){this.x+=this.dx;this.y+=this.dy;const d=Math.hypot(this.x-this.startX,this.y-this.startY);if(d>this.range){this.dx*=-1;this.dy*=-1;}}}
- draw(){ctx.fillStyle='#444';ctx.fillRect(this.x,this.y,this.w,this.h);}}
-class Particle{constructor(x,y){this.x=x;this.y=y;this.vx=(Math.random()-0.5)*4;this.vy=(Math.random()-0.5)*4;this.life=30;}
-update(){this.x+=this.vx;this.y+=this.vy;this.vy+=0.2;this.life--;}
-draw(){ctx.fillStyle='rgba(255,150,0,'+(this.life/30)+')';ctx.beginPath();ctx.arc(this.x,this.y,3,0,Math.PI*2);ctx.fill();}}
-class Projectile{constructor(x,y,dir){this.x=x;this.y=y;this.vx=dir*8;this.life=80;}
-update(){this.x+=this.vx;this.life--;}
-draw(){ctx.fillStyle='yellow';ctx.fillRect(this.x-4,this.y-2,8,4);}}
-class Enemy extends Rect{constructor(x,y,type){super(x,y,24,24);this.type=type;this.vx=type=='patrol'?2:0;this.dir=1;this.startX=x;this.vy=0;}
-update(){if(this.type=='patrol'){this.x+=this.vx*this.dir;if(Math.abs(this.x-this.startX)>80)this.dir*=-1;}else{const dx=player.x-this.x;if(Math.abs(dx)<200)this.x+=Math.sign(dx)*1.5;}
-this.vy+=0.5;this.y+=this.vy;this.onGround=false;for(const p of level.platforms){if(collide(this,p)&&this.vy>=0){this.y=p.y-this.h;this.vy=0;this.onGround=true;}}
-if(this.y>HEIGHT+100)this.life=0;}
-draw(){ctx.fillStyle='red';ctx.fillRect(this.x,this.y,this.w,this.h);}}
-class Player extends Rect{constructor(){super(50,HEIGHT-60,32,32);this.vx=0;this.vy=0;this.face=1;this.dash=0;this.onGround=false;}
-shoot(){projectiles.push(new Projectile(this.x+this.w/2*this.face,this.y+this.h/2,this.face));play('shoot');}
-update(){if(keys['ArrowLeft']||keys['KeyA']){this.vx=-3;this.face=-1;}else if(keys['ArrowRight']||keys['KeyD']){this.vx=3;this.face=1;}else this.vx=0;if(keys['ShiftLeft']||keys['ShiftRight']){if(this.dash<=0)this.dash=10;}
-if(this.dash>0){this.vx=this.face*6;this.dash--;}
-if((keys['ArrowUp']||keys['KeyW'])&&this.onGround){this.vy=-10;play('jump');}
-this.vy+=0.5;this.x+=this.vx;this.y+=this.vy;this.onGround=false;for(const p of level.platforms){if(collide(this,p)&&this.vy>=0){this.y=p.y-this.h;this.vy=0;this.onGround=true;}}
-if(this.x<0)this.x=0;if(this.x+this.w>WIDTH)this.x=WIDTH-this.w;if(this.y>HEIGHT){loseLife();}}
-draw(){ctx.fillStyle='lime';ctx.fillRect(this.x,this.y,this.w,this.h);}}
-function collide(a,b){return a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;}
-const levels=[{
- platforms:[new Platform(0,HEIGHT-20,WIDTH,20),new Platform(200,450,150,20),new Platform(400,350,150,20,1,0,100)],
- enemies:[{x:500,y:300,type:'patrol'},{x:250,y:0,type:'kamikaze'}],
- flag:{x:750,y:300}
-},{
- platforms:[new Platform(0,HEIGHT-20,WIDTH,20),new Platform(150,500,120,20,0,-1,80),new Platform(350,400,150,20),new Platform(600,320,120,20)],
- enemies:[{x:620,y:0,type:'kamikaze'},{x:360,y:0,type:'patrol'},{x:200,y:0,type:'patrol'}],
- flag:{x:760,y:250}
-},{
- platforms:[new Platform(0,HEIGHT-20,WIDTH,20),new Platform(100,480,150,20),new Platform(300,380,120,20,0,1,100),new Platform(520,300,150,20)],
- enemies:[{x:550,y:0,type:'patrol'},{x:350,y:0,type:'kamikaze'},{x:150,y:0,type:'patrol'},{x:650,y:0,type:'kamikaze'}],
- flag:{x:760,y:220}
-}];
-let level,player,projectiles=[],particles=[],enemies=[];
-function loadLevel(i){levelIndex=i;level=levels[i];player=new Player();projectiles=[];particles=[];enemies=level.enemies.map(e=>new Enemy(e.x,e.y,e.type));}
-function resetLevel(){score=0;lives=3;loadSounds();loadLevel(0);gameState='play';overlay.textContent='';}
-function nextLevel(){if(levelIndex+1<levels.length){loadLevel(levelIndex+1);}else{gameState='win';overlay.textContent='You Win! (R restart)';}}
-function loseLife(){lives--;play('ouch');if(lives<=0){gameState='over';overlay.textContent='Game Over';setTimeout(resetLevel,3000);}else{player=new Player();}}
-function togglePause(){if(gameState==='play'){gameState='pause';overlay.textContent='Paused';}else if(gameState==='pause'){gameState='play';overlay.textContent='';}}
-function toggleMute(){mute=!mute;}
-function update(){if(gameState!=='play')return;level.platforms.forEach(p=>p.update());player.update();projectiles.forEach(p=>p.update());projectiles=projectiles.filter(p=>p.life>0&&p.x>0&&p.x<WIDTH);enemies.forEach(e=>e.update());for(const e of enemies){for(const p of projectiles){if(collide(p,e)){particles.push(...Array.from({length:6},()=>new Particle(e.x+e.w/2,e.y+e.h/2)));p.life=0;e.life=0;score+=100;play('boom');}}if(collide(player,e)){loseLife();}}
-enemies=enemies.filter(e=>e.life!==0);particles.forEach(pt=>pt.update());particles=particles.filter(pt=>pt.life>0);if(collide(player,level.flag)){nextLevel();}}
-function drawBackground(t){const g=ctx.createLinearGradient(0,0,0,HEIGHT);const c1='hsl('+((t/50)%360)+',50%,25%)';const c2='hsl('+((t/50+60)%360)+',50%,10%)';g.addColorStop(0,c1);g.addColorStop(1,c2);ctx.fillStyle=g;ctx.fillRect(0,0,WIDTH,HEIGHT);}
-function draw(){ctx.clearRect(0,0,WIDTH,HEIGHT);drawBackground(lastTime);level.platforms.forEach(p=>p.draw());ctx.fillStyle='gold';ctx.save();ctx.translate(level.flag.x,level.flag.y);ctx.scale(1+Math.sin(lastTime/200)*0.05,1+Math.sin(lastTime/200)*0.05);ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(20,-20);ctx.lineTo(20,20);ctx.closePath();ctx.fill();ctx.restore();player.draw();enemies.forEach(e=>e.draw());projectiles.forEach(p=>p.draw());particles.forEach(pt=>pt.draw());ctx.fillStyle='white';ctx.fillText('Score: '+score,WIDTH-120,20);ctx.fillText('Lives: '+"\u2764".repeat(lives),20,20);}
-function loop(ts){lastTime=ts;update();draw();requestAnimationFrame(loop);}
-document.addEventListener('keydown',e=>{keys[e.code]=true;if(e.code==='Space'&&gameState==='play')player.shoot();if(e.code==='KeyP'||e.code==='Escape')togglePause();if(e.code==='KeyM')toggleMute();if(e.code==='KeyR'){resetLevel();}});
-document.addEventListener('keyup',e=>{keys[e.code]=false;});
-resetLevel();requestAnimationFrame(loop);
-</script>
+<header>
+    <h1>Vítejte v EasyWeb</h1>
+    <p class="lead">Připravili jsme pro vás dynamickou 2D akční hru. Stačí kliknout na tlačítko níže a ponořit se do dobrodružství.</p>
+</header>
+<main>
+    <a href="action_game.html" class="start-btn">Spustit hru</a>
+</main>
+<footer>
+    &copy; 2025 EasyWeb
+</footer>
 </body>
 </html>
