@@ -7,7 +7,7 @@ const posZ = document.getElementById('posZ');
 const posDisplay = document.getElementById('posDisplay');
 
 async function loadSound() {
-  const response = await fetch('https://cdn.jsdelivr.net/gh/mdn/webaudio-examples/panner-node/audio/hello.mp3');
+  const response = await fetch('bad-piggies-low-quality.mp3');
   const arrayBuffer = await response.arrayBuffer();
   buffer = await audioCtx.decodeAudioData(arrayBuffer);
 }
