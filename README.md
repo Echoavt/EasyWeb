@@ -1,31 +1,7 @@
 # Akustický Inovativní Simulátor
 
-Tento repozitář obsahuje ukázkovou full‑stack aplikaci rozdělenou na **backend** a **frontend**.
+Tento repozitář nyní obsahuje pouze statické HTML soubory, které lze přímo hostovat pomocí GitHub Pages.
 
-## Backend
-- Node.js + Express
-- MongoDB (Mongoose)
-- JWT autentizace
-- CRUD operace pro presety a projekty
-- Sdílení projektů veřejným URL
+Otevřete `index.html` a vyzkoušejte jednoduchý akustický simulátor nebo zkuste i malé hry v `game.html` a `action_game.html`.
 
-Spuštění:
-```bash
-cd backend
-npm install
-cp .env.example .env # nastavte proměnné
-npm start
-```
-
-## Frontend
-- React (Vite)
-- React Router, Context API
-
-Spuštění:
-```bash
-cd frontend/app
-npm install
-npm run dev
-```
-
-Frontend očekává běžící backend na stejném hostiteli.
+Repozitář již neobsahuje žádný backend ani React aplikaci a je připraven k nasazení jako čistě statický web.
