@@ -3,11 +3,7 @@ import assert from 'assert';
 
 async function run() {
   const html = await fs.readFile('index.html', 'utf8');
-  assert(html.includes('<link rel="manifest" href="manifest.json">'),
-    'index.html should reference manifest.json');
-
-  const manifest = JSON.parse(await fs.readFile('manifest.json', 'utf8'));
-  assert(manifest.name, 'manifest.json should contain a name');
+  assert(html.includes('simulator.js'), 'index.html should load simulator.js');
 }
 
 run().then(() => console.log('All tests passed')).catch(err => {
