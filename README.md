@@ -13,3 +13,21 @@ například pomocí GitHub Pages.
 
 Aplikaci spustíte otevřením `index.html` v prohlížeči. Není potřeba žádný
 backend ani instalace závislostí.
+
+## Lokální vývoj
+Pro pohodlné spuštění lokální instance je připraven balíček `http-server`.
+
+1. Nainstalujte závislosti:
+   ```bash
+   npm install
+   ```
+2. Spusťte server:
+   ```bash
+   npm start
+   ```
+Aplikace bude dostupná na adrese <http://localhost:8080>.
+
+Pro ověření konfigurace je k dispozici jednoduchý test:
+```bash
+npm test
+```
