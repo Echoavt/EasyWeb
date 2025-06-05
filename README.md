@@ -1,7 +1,15 @@
-# Akustický Inovativní Simulátor
+# Akustický Inovativní Simulátor 2.0
 
-Tento repozitář nyní obsahuje pouze statické HTML soubory, které lze přímo hostovat pomocí GitHub Pages.
+Tato verze kompletně předělává původní statický web a přináší několik nových
+funkcí. Stále jde o čistě klientskou aplikaci, kterou lze snadno hostovat
+například pomocí GitHub Pages.
 
-Otevřete `index.html` a vyzkoušejte jednoduchý akustický simulátor nebo zkuste i malé hry v `game.html` a `action_game.html`. Nově je k dispozici stránka `sequencer.html` se základním krokovým sekvencerem pro tvorbu rytmů.
+## Novinky
+- Jednotná domovská stránka `index.html` se sekcemi pro syntetizér, krokový
+  sekvencer a jednoduchý soundboard s ukázkovými samply.
+- Přepínání světlého a tmavého režimu a moderní vzhled.
+- PWA podpora – přibyl `manifest.json` a `sw.js` pro základní offline funkce.
+- Stávající mini hry (`game.html`, `action_game.html`) zůstávají dostupné z menu.
 
-Repozitář již neobsahuje žádný backend ani React aplikaci a je připraven k nasazení jako čistě statický web.
+Aplikaci spustíte otevřením `index.html` v prohlížeči. Není potřeba žádný
+backend ani instalace závislostí.
