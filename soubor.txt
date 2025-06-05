@@ -1,3 +1,0 @@
-Toto je novy textovy soubor.
-Toto je druhy radek ve souboru.
-Toto je treti radek doplnujici text.
