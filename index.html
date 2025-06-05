@@ -4,19 +4,20 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Spatial Acoustics Simulator</title>
-  <style>
-    body { font-family: sans-serif; margin: 2em; }
-    #controls { display: flex; gap: 1em; align-items: center; }
-  </style>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <h1>Spatial Acoustics Simulator</h1>
+  <header>
+    <h1>Spatial Acoustics Simulator</h1>
+    <button id="themeToggle">Toggle Theme</button>
+  </header>
   <div id="controls">
     <label>X: <input type="range" id="posX" min="-10" max="10" step="0.1" value="0"></label>
     <label>Y: <input type="range" id="posY" min="-10" max="10" step="0.1" value="0"></label>
     <label>Z: <input type="range" id="posZ" min="-10" max="10" step="0.1" value="-5"></label>
     <button id="play">Play Sound</button>
   </div>
+  <div id="posDisplay"></div>
   <script type="module" src="simulator.js"></script>
 </body>
 </html>
