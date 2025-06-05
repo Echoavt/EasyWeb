@@ -7,19 +7,28 @@
   <title>Akustický Inovativní Simulátor 2.0</title>
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
 </head>
 <body>
   <header id="topbar">
     <h1>Akustický Simulátor</h1>
-    <nav>
-      <a href="#synth">Synth</a>
-      <a href="#sequencer">Sequencer</a>
-      <a href="#soundboard">Soundboard</a>
-      <a href="game.html">Plošinovka</a>
-      <a href="action_game.html">Akční hra</a>
+    <nav class="nav-links">
+      <a href="#synth"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 5h20v14H2z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M6 9v6m4-6v6m4-6v6m4-6v6" stroke="currentColor" stroke-width="2"/></svg> Synth</a>
+      <a href="#sequencer"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18" stroke="currentColor" stroke-width="2"/></svg> Sequencer</a>
+      <a href="#soundboard"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9l6-6v18l-6-6H1V9z" fill="currentColor"/><path d="M15 9v6" stroke="currentColor" stroke-width="2"/><circle cx="18" cy="12" r="3" stroke="currentColor" stroke-width="2" fill="none"/></svg> Soundboard</a>
+      <a href="game.html"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="8" cy="12" r="2" fill="currentColor"/><circle cx="16" cy="12" r="2" fill="currentColor"/></svg> Plošinovka</a>
+      <a href="action_game.html"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h14l-1 9H6z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M6 18h12" stroke="currentColor" stroke-width="2"/><circle cx="9" cy="21" r="1" fill="currentColor"/><circle cx="15" cy="21" r="1" fill="currentColor"/></svg> Akční hra</a>
     </nav>
+    <div class="hamburger" id="menu-btn" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </div>
     <button id="theme-toggle" aria-label="Přepnout režim">🌙</button>
   </header>
+  <section class="hero" id="hero">
+    <h1>Akustický Simulátor</h1>
+    <p>Moderní nástroje pro tvorbu zvuku v prohlížeči</p>
+    <button id="start-btn">Začít</button>
+  </section>
   <main class="main">
     <section id="synth" class="section">
       <h2>Syntetizér</h2>
@@ -57,6 +66,6 @@
     </section>
   </main>
   <div id="toast"></div>
-  <script type="module" src="main.js"></script>
+  <script type="module" src="app.js"></script>
 </body>
 </html>
