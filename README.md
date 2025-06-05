@@ -2,6 +2,6 @@
 
 Tento repozitář nyní obsahuje pouze statické HTML soubory, které lze přímo hostovat pomocí GitHub Pages.
 
-Otevřete `index.html` a vyzkoušejte jednoduchý akustický simulátor nebo zkuste i malé hry v `game.html` a `action_game.html`.
+Otevřete `index.html` a vyzkoušejte jednoduchý akustický simulátor nebo zkuste i malé hry v `game.html` a `action_game.html`. Nově je k dispozici stránka `sequencer.html` se základním krokovým sekvencerem pro tvorbu rytmů.
 
 Repozitář již neobsahuje žádný backend ani React aplikaci a je připraven k nasazení jako čistě statický web.
