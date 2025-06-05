@@ -1,0 +1,17 @@
+{
+  "name": "easyweb",
+  "version": "1.0.0",
+  "description": "Akusticky Inovativni Simulator 2.0",
+  "main": "app.js",
+  "scripts": {
+    "start": "http-server -p 8080",
+    "dev": "http-server -p 8080 -c-1",
+    "test": "node test/basic.test.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "http-server": "^14.1.1"
+  }
+}
