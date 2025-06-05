@@ -70,3 +70,12 @@ footer{text-align:center;padding:1rem;background:#eee;margin-top:2rem;}
     #sidebar.open{transform:translateX(0);}
     .main{margin-left:0;}
 }
+
+/* Sequencer */
+#sequencer-app{padding:2rem;text-align:center;}
+.step-row{display:flex;align-items:center;justify-content:center;margin-bottom:0.5rem;}
+.step-label{width:60px;text-align:right;margin-right:0.5rem;}
+.step{width:20px;height:20px;border:1px solid var(--accent);margin-right:2px;border-radius:2px;cursor:pointer;}
+.step.active{background:var(--accent);}
+.step.playing{box-shadow:0 0 5px var(--accent);}
+.seq-controls{margin-top:1rem;}

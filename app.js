@@ -143,7 +143,8 @@ const l10n = {
     help:{cs:'Nápověda',en:'Help'},
     helpText:{cs:'Základní pokyny...',en:'Basic instructions...'},
     autoTune:{cs:'Automatické ladění',en:'Auto tune'},
-    send:{cs:'Odeslat',en:'Send'}
+    send:{cs:'Odeslat',en:'Send'},
+    seqLink:{cs:'Sekvencer',en:'Sequencer'}
 };
 let currentLang='cs';
 const langSelect=document.getElementById('lang-select');
