@@ -31,3 +31,13 @@ Pro ověření konfigurace je k dispozici jednoduchý test:
 ```bash
 npm test
 ```
+
+## Nasazení na GitHub Pages
+
+Úložiště obsahuje připravený workflow pro automatické nasazení na GitHub Pages.
+
+1. V nastavení repozitáře na GitHubu otevřete **Settings → Pages**.
+2. Jako zdroj zvolte **GitHub Actions** a uložte.
+3. Při každém pushi na větev `main` proběhne workflow `.github/workflows/deploy.yml`,
+   který web vygeneruje a publikuje.
+4. Výsledná stránka bude dostupná na URL uvedené přímo v nastavení Pages.
