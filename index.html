@@ -3,22 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Název Tvé Hry</title>
+    <title>Akustický Inovativní Simulátor</title>
     <style>
-        :root{
-            --primary:#1e3a8a;
-            --secondary:#60a5fa;
-            --accent:#f97316;
-            --text:#333;
-            --bg:#f9fafb;
-        }
-        *{box-sizing:border-box;}
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+        /* Resets */
+        *{margin:0;padding:0;box-sizing:border-box;}
         html{scroll-behavior:smooth;}
         body{
-            margin:0;
-            font-family:'Segoe UI', Tahoma, sans-serif;
-            color:var(--text);
-            background:var(--bg);
+            font-family:'Roboto', sans-serif;
+            background:#f9fafb;
+            color:#333;
             display:flex;
         }
         /* Sidebar */
@@ -28,265 +22,358 @@
             position:fixed;
             top:0;left:0;bottom:0;
             padding:1rem;
-            box-shadow:2px 0 5px rgba(0,0,0,0.1);
             transform:translateX(0);
-            transition:transform 0.3s ease;
+            transition:transform 0.3s ease-in-out;
             z-index:1000;
+            box-shadow:2px 0 5px rgba(0,0,0,0.1);
         }
-        #sidebar h2{margin-top:0;color:var(--primary);}
+        #sidebar .logo{
+            display:flex;
+            align-items:center;
+            gap:0.5rem;
+            margin-bottom:2rem;
+            color:#1e3a8a;
+            font-weight:700;
+        }
         #sidebar nav a{
             display:block;
             padding:0.5rem 0;
-            color:var(--text);
             text-decoration:none;
-            position:relative;
+            color:#333;
             transition:color 0.3s;
+            position:relative;
         }
         #sidebar nav a::after{
             content:"";
             position:absolute;
             left:0;bottom:0;
             width:0;height:2px;
-            background:var(--accent);
+            background:#10b981;
             transition:width 0.3s;
         }
-        #sidebar nav a:hover{color:var(--accent);}
+        #sidebar nav a:hover{color:#10b981;}
         #sidebar nav a:hover::after{width:100%;}
-        #sidebar .social{
-            margin-top:2rem;
-            display:flex;
-            gap:0.5rem;
-        }
-        #sidebar .social svg{
-            width:24px;height:24px;
-            fill:var(--secondary);
-            transition:transform 0.3s;
-            cursor:pointer;
-        }
-        #sidebar .social svg:hover{transform:scale(1.2);}
-        #close-btn{
-            display:none;
-            cursor:pointer;
-            font-size:1.5rem;
-            margin-bottom:1rem;
-            color:var(--accent);
-        }
+        #close-btn{display:none;font-size:1.5rem;margin-bottom:1rem;cursor:pointer;color:#10b981;}
         /* Overlay */
         #overlay{
-            position:fixed;
-            inset:0;
+            position:fixed;inset:0;
             background:rgba(0,0,0,0.4);
-            opacity:0;
-            visibility:hidden;
+            opacity:0;visibility:hidden;
             transition:opacity 0.3s;
             z-index:900;
         }
         #overlay.active{opacity:1;visibility:visible;}
-        /* Top bar */
+        /* Topbar */
         #topbar{
-            position:fixed;
-            top:0;left:0;right:0;
-            background:#fff;
             display:none;
-            align-items:center;
-            justify-content:space-between;
+            position:fixed;top:0;left:0;right:0;
+            background:#fff;
             padding:0.5rem 1rem;
             box-shadow:0 2px 5px rgba(0,0,0,0.1);
+            justify-content:space-between;
+            align-items:center;
             z-index:950;
         }
-        #menu-btn{font-size:1.5rem;cursor:pointer;color:var(--primary);}
-        /* Main content */
-        .content{flex:1;margin-left:250px;}
+        #menu-btn{font-size:1.5rem;cursor:pointer;color:#1e3a8a;}
+        /* Main */
+        .main{flex:1;margin-left:250px;}
         @media(max-width:768px){
             #sidebar{transform:translateX(-100%);}
             #sidebar.open{transform:translateX(0);}
             #close-btn{display:block;}
+            .main{margin-left:0;}
             #topbar{display:flex;}
-            .content{margin-left:0;}
         }
-        /* Hero section */
-        .hero{
-            height:100vh;
-            display:flex;
-            flex-direction:column;
-            justify-content:center;
-            align-items:center;
-            text-align:center;
-            color:#fff;
-            position:relative;
-            overflow:hidden;
-        }
-        @keyframes bgGradient{
-            0%{background-position:0% 50%;}
-            50%{background-position:100% 50%;}
-            100%{background-position:0% 50%;}
-        }
-        .hero::before{
-            content:"";
-            position:absolute;
-            inset:0;
-            background:linear-gradient(-45deg,var(--primary),var(--secondary),var(--accent),var(--secondary));
-            background-size:400% 400%;
-            animation:bgGradient 15s ease infinite;
-            z-index:-1;
-        }
-        .hero h1{font-size:3rem;margin:0;opacity:0;transform:translateY(20px);transition:all 1s ease 0.3s;}
+        /* Hero */
+        .hero{height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;color:#fff;position:relative;overflow:hidden;}
+        @keyframes gradientMove{0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
+        .hero::before{content:"";position:absolute;inset:0;background:linear-gradient(-45deg,#1e3a8a,#60a5fa,#10b981,#60a5fa);background-size:400% 400%;animation:gradientMove 15s ease infinite;z-index:-1;}
+        .hero h1{font-size:3rem;margin-bottom:1rem;opacity:0;transform:translateY(20px);transition:all 1s ease 0.3s;}
         .hero p{font-size:1.3rem;opacity:0;transform:translateY(20px);transition:all 1s ease 0.6s;}
-        .hero .cta{
-            margin-top:2rem;
-            padding:1rem 2rem;
-            font-size:1.2rem;
-            background:var(--accent);
-            color:#fff;
-            border:none;
-            border-radius:5px;
-            cursor:pointer;
-            text-decoration:none;
-            opacity:0;
-            transform:translateY(-20px);
-            transition:background 0.3s, box-shadow 0.3s, transform 0.5s ease 0.9s, opacity 0.5s ease 0.9s;
-        }
-        .hero .cta:hover{
-            background:#c0560b;
-            box-shadow:0 4px 8px rgba(0,0,0,0.3);
-        }
+        .hero .cta{margin-top:2rem;padding:1rem 2rem;font-size:1.2rem;background:#10b981;color:#fff;border:none;border-radius:5px;cursor:pointer;opacity:0;transform:translateY(-20px);transition:background 0.3s,box-shadow 0.3s,transform 0.5s ease 0.9s,opacity 0.5s ease 0.9s;}
+        .hero .cta:hover{background:#059669;box-shadow:0 4px 8px rgba(0,0,0,0.3);}
         .hero.loaded h1,.hero.loaded p,.hero.loaded .cta{opacity:1;transform:translateY(0);}
-        .hero.loaded .cta{animation:bounce 2s infinite 2s;}
-        @keyframes bounce{
-            0%,20%,60%,100%{transform:translateY(0);}
-            40%{transform:translateY(-10px);}
-            80%{transform:translateY(-5px);}
-        }
-        /* Sections */
-        section{padding:4rem 1rem;max-width:1000px;margin:0 auto;}
-        section h2{font-size:2rem;text-align:center;margin-bottom:2rem;opacity:0;transform:translateY(20px);transition:all 1s;}
-        section.visible h2{opacity:1;transform:translateY(0);}
-        /* About */
-        #about .features{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1.5rem;text-align:center;}
-        #about .feature{
-            padding:1rem;border-radius:8px;background:#fff;box-shadow:0 2px 5px rgba(0,0,0,0.1);
-            transition:transform 0.3s;
-        }
-        #about .feature:hover{transform:scale(1.05) rotate(2deg);}
-        #about .feature svg{width:40px;height:40px;fill:var(--secondary);margin-bottom:0.5rem;}
+        .hero.loaded .cta{animation:pulse 2s infinite 2s;}
+        @keyframes pulse{0%{transform:scale(1);}50%{transform:scale(1.05);}100%{transform:scale(1);}}
+        /* Simulator Section */
+        #simulator{padding:4rem 1rem;max-width:1000px;margin:0 auto;text-align:center;}
+        #simulator canvas{background:#000;border-radius:4px;max-width:100%;margin-bottom:1rem;}
+        .controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin:2rem 0;text-align:left;}
+        .controls label{display:flex;flex-direction:column;font-weight:700;}
+        .controls input[type="range"],.controls select{margin-top:0.5rem;}
+        .controls input[type="checkbox"]{margin-right:0.5rem;}
+        #toggleSound{padding:1rem 2rem;font-size:1.2rem;background:#1e3a8a;color:#fff;border:none;border-radius:5px;cursor:pointer;transition:background 0.3s;}
+        #toggleSound.active{background:#10b981;}
         /* Gallery */
-        #gallery .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;}
-        #gallery .grid-item{position:relative;overflow:hidden;border-radius:8px;}
-        #gallery .grid-item img{width:100%;height:100%;object-fit:cover;transition:transform 0.5s;}
-        #gallery .grid-item:hover img{transform:scale(1.1);}
-        #gallery .grid-item .label{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,0.6);color:#fff;padding:0.5rem;text-align:center;opacity:0;transition:opacity 0.3s;}
-        #gallery .grid-item:hover .label{opacity:1;}
+        #gallery{padding:4rem 1rem;max-width:1000px;margin:0 auto;}
+        .sound-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;}
+        .sound-item{position:relative;background:#60a5fa;color:#fff;border-radius:8px;display:flex;justify-content:center;align-items:center;height:150px;cursor:pointer;overflow:hidden;transition:transform 0.3s,box-shadow 0.3s;}
+        .sound-item:hover{transform:scale(1.05);box-shadow:0 4px 8px rgba(0,0,0,0.3);}
+        .sound-item::after{content:attr(data-label);position:absolute;inset:0;background:rgba(0,0,0,0.5);display:flex;justify-content:center;align-items:center;font-size:1.2rem;opacity:0;transition:opacity 0.3s;}
+        .sound-item:hover::after{opacity:1;}
+        @media(max-width:768px){.sound-grid{grid-template-columns:1fr;}}
         /* Contact */
-        #contact form{display:flex;flex-direction:column;gap:1rem;max-width:400px;margin:0 auto;}
-        #contact input[type="text"],#contact input[type="email"]{padding:0.5rem;font-size:1rem;border:1px solid #ccc;border-radius:4px;}
-        #contact button{padding:0.75rem;background:var(--primary);color:#fff;border:none;border-radius:4px;cursor:pointer;transition:background 0.3s;}
-        #contact button:hover{background:#162b5c;}
-        #contact .links{margin-top:2rem;text-align:center;}
-        #contact .links svg{width:30px;height:30px;margin:0 0.5rem;fill:var(--primary);transition:transform 0.3s;cursor:pointer;}
-        #contact .links svg:hover{transform:scale(1.2);}        
-        footer{border-top:1px solid #ddd;padding:1rem 0;font-size:0.9rem;color:#666;text-align:center;}
+        #contact{padding:4rem 1rem;max-width:600px;margin:0 auto;text-align:center;}
+        #contact-form{display:flex;flex-direction:column;gap:1rem;}
+        #contact-form input,#contact-form textarea{padding:0.5rem;border:1px solid #ccc;border-radius:4px;font-family:'Roboto',sans-serif;}
+        #contact-form button{padding:0.75rem;background:#1e3a8a;color:#fff;border:none;border-radius:4px;cursor:pointer;transition:background 0.3s;}
+        #contact-form button:hover{background:#162b5c;}
+        #thankyou{display:none;margin-top:1rem;font-weight:700;color:#10b981;}
+        /* Footer */
+        footer{background:#1e3a8a;color:#fff;text-align:center;padding:1rem 0;}
+        footer a{color:#60a5fa;text-decoration:none;}
+        footer svg{width:20px;height:20px;fill:#60a5fa;margin-left:0.5rem;transition:fill 0.3s;vertical-align:middle;}
+        footer svg:hover{fill:#10b981;}
     </style>
     <script>
-        document.addEventListener('DOMContentLoaded',()=>{
-            const hero=document.querySelector('.hero');
-            setTimeout(()=>hero.classList.add('loaded'),100);
-
-            const menuBtn=document.querySelector('#menu-btn');
-            const closeBtn=document.querySelector('#close-btn');
-            const sidebar=document.querySelector('#sidebar');
-            const overlay=document.querySelector('#overlay');
-
-            menuBtn.addEventListener('click',()=>{sidebar.classList.add('open');overlay.classList.add('active');});
-            closeBtn.addEventListener('click',()=>{sidebar.classList.remove('open');overlay.classList.remove('active');});
-            overlay.addEventListener('click',()=>{sidebar.classList.remove('open');overlay.classList.remove('active');});
-
-            document.querySelectorAll('a[href^="#"]').forEach(anchor=>{
-                anchor.addEventListener('click',function(e){e.preventDefault();document.querySelector(this.getAttribute('href')).scrollIntoView({behavior:'smooth'});if(sidebar.classList.contains('open')){sidebar.classList.remove('open');overlay.classList.remove('active');}});
-            });
-
-            const observer=new IntersectionObserver(entries=>{
-                entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('visible');}});
-            },{threshold:0.1});
-            document.querySelectorAll('section').forEach(sec=>observer.observe(sec));
+    document.addEventListener('DOMContentLoaded',()=>{
+        const sidebar=document.getElementById('sidebar');
+        const overlay=document.getElementById('overlay');
+        const menuBtn=document.getElementById('menu-btn');
+        const closeBtn=document.getElementById('close-btn');
+        const hero=document.querySelector('.hero');
+        hero.classList.add('loaded');
+        menuBtn.addEventListener('click',()=>{sidebar.classList.add('open');overlay.classList.add('active');});
+        closeBtn.addEventListener('click',()=>{sidebar.classList.remove('open');overlay.classList.remove('active');});
+        overlay.addEventListener('click',()=>{sidebar.classList.remove('open');overlay.classList.remove('active');});
+        document.querySelectorAll('#sidebar a').forEach(a=>{
+            a.addEventListener('click',e=>{e.preventDefault();document.querySelector(a.getAttribute('href')).scrollIntoView({behavior:'smooth'});sidebar.classList.remove('open');overlay.classList.remove('active');});
         });
+        const startLink=document.querySelector('.cta');
+        startLink.addEventListener('click',e=>{e.preventDefault();document.querySelector('#simulator').scrollIntoView({behavior:'smooth'});});
+
+        /* Audio setup */
+        let audioCtx;let oscillator;let gainNode;let filterNode;let convolverNode;let distortionNode;let analyserTime;let analyserFreq;let animationId;let isPlaying=false;
+        const oscCanvas=document.getElementById('oscilloscope');
+        const oscCtx=oscCanvas.getContext('2d');
+        const specCanvas=document.getElementById('spectrum');
+        const specCtx=specCanvas.getContext('2d');
+        const waveform=document.getElementById('waveform');
+        const frequency=document.getElementById('frequency');
+        const amplitude=document.getElementById('amplitude');
+        const filterType=document.getElementById('filterType');
+        const filterFreq=document.getElementById('filterFreq');
+        const filterQ=document.getElementById('filterQ');
+        const reverbChk=document.getElementById('reverb');
+        const reverbTime=document.getElementById('reverbTime');
+        const reverbLabel=document.getElementById('reverbLabel');
+        const distChk=document.getElementById('distortion');
+        const distDrive=document.getElementById('distortionDrive');
+        const distLabel=document.getElementById('distLabel');
+        const toggleBtn=document.getElementById('toggleSound');
+
+        function createReverb(time){
+            const convolver=audioCtx.createConvolver();
+            const rate=audioCtx.sampleRate;
+            const length=rate*time;
+            const impulse=audioCtx.createBuffer(2,length,rate);
+            for(let c=0;c<2;c++){
+                const channel=impulse.getChannelData(c);
+                for(let i=0;i<length;i++){
+                    channel[i]=(Math.random()*2-1)*Math.pow(1-i/length,2);
+                }
+            }
+            convolver.buffer=impulse;
+            return convolver;
+        }
+        function createDistortion(amount){
+            const wave=audioCtx.createWaveShaper();
+            const curve=new Float32Array(44100);
+            for(let i=0;i<curve.length;i++){
+                const x=i*2/curve.length-1;
+                curve[i]=Math.tanh(x*amount);
+            }
+            wave.curve=curve;wave.oversample='4x';
+            return wave;
+        }
+        function connect(){
+            analyserTime=audioCtx.createAnalyser();
+            analyserTime.fftSize=2048;
+            analyserFreq=audioCtx.createAnalyser();
+            analyserFreq.fftSize=256;
+            oscillator.connect(filterNode);
+            filterNode.connect(distortionNode);
+            distortionNode.connect(convolverNode);
+            convolverNode.connect(gainNode);
+            gainNode.connect(analyserTime);
+            analyserTime.connect(analyserFreq);
+            analyserFreq.connect(audioCtx.destination);
+        }
+        function startAudio(){
+            if(!audioCtx)audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+            oscillator=audioCtx.createOscillator();
+            gainNode=audioCtx.createGain();
+            filterNode=audioCtx.createBiquadFilter();
+            convolverNode=reverbChk.checked?createReverb(parseFloat(reverbTime.value)):audioCtx.createGain();
+            distortionNode=distChk.checked?createDistortion(parseFloat(distDrive.value)/10):audioCtx.createGain();
+            oscillator.type=waveform.value;
+            oscillator.frequency.value=frequency.value;
+            gainNode.gain.value=amplitude.value;
+            filterNode.type=filterType.value;
+            filterNode.frequency.value=filterFreq.value;
+            filterNode.Q.value=filterQ.value;
+            connect();
+            oscillator.start();
+            isPlaying=true;
+            toggleBtn.textContent='Zastavit zvuk';
+            toggleBtn.classList.add('active');
+            draw();
+        }
+        function stopAudio(){
+            if(!isPlaying)return;
+            oscillator.stop();
+            oscillator.disconnect();
+            gainNode.disconnect();
+            filterNode.disconnect();
+            convolverNode.disconnect();
+            distortionNode.disconnect();
+            analyserTime.disconnect();
+            analyserFreq.disconnect();
+            cancelAnimationFrame(animationId);
+            oscCtx.clearRect(0,0,oscCanvas.width,oscCanvas.height);
+            specCtx.clearRect(0,0,specCanvas.width,specCanvas.height);
+            isPlaying=false;
+            toggleBtn.textContent='Spustit zvuk';
+            toggleBtn.classList.remove('active');
+        }
+        function draw(){
+            const bufferLength=analyserTime.fftSize;
+            const dataArray=new Uint8Array(bufferLength);
+            const freqLength=analyserFreq.frequencyBinCount;
+            const freqArray=new Uint8Array(freqLength);
+            function loop(){
+                animationId=requestAnimationFrame(loop);
+                analyserTime.getByteTimeDomainData(dataArray);
+                oscCtx.fillStyle='#000';oscCtx.fillRect(0,0,oscCanvas.width,oscCanvas.height);
+                oscCtx.lineWidth=2;oscCtx.strokeStyle='#60a5fa';oscCtx.beginPath();
+                let slice=oscCanvas.width/bufferLength;let x=0;
+                for(let i=0;i<bufferLength;i++){
+                    let v=dataArray[i]/128.0;let y=v*oscCanvas.height/2;
+                    if(i===0)oscCtx.moveTo(x,y);else oscCtx.lineTo(x,y);
+                    x+=slice;
+                }
+                oscCtx.lineTo(oscCanvas.width,oscCanvas.height/2);oscCtx.stroke();
+                analyserFreq.getByteFrequencyData(freqArray);
+                specCtx.fillStyle='#000';specCtx.fillRect(0,0,specCanvas.width,specCanvas.height);
+                let barWidth=(specCanvas.width/freqLength)*1.5;let bx=0;
+                for(let i=0;i<freqLength;i++){
+                    let bh=freqArray[i]/255*specCanvas.height;
+                    let hue=210-bh/specCanvas.height*210;
+                    specCtx.fillStyle=`hsl(${hue},70%,50%)`;
+                    specCtx.fillRect(bx,specCanvas.height-bh,barWidth,bh);
+                    bx+=barWidth+1;
+                }
+            }
+            loop();
+        }
+        toggleBtn.addEventListener('click',()=>{isPlaying?stopAudio():startAudio();});
+        waveform.addEventListener('change',()=>{if(oscillator)oscillator.type=waveform.value;});
+        frequency.addEventListener('input',()=>{if(oscillator)oscillator.frequency.setValueAtTime(frequency.value,audioCtx.currentTime);});
+        amplitude.addEventListener('input',()=>{if(gainNode)gainNode.gain.setValueAtTime(amplitude.value,audioCtx.currentTime);});
+        filterType.addEventListener('change',()=>{if(filterNode)filterNode.type=filterType.value;});
+        filterFreq.addEventListener('input',()=>{if(filterNode)filterNode.frequency.setValueAtTime(filterFreq.value,audioCtx.currentTime);});
+        filterQ.addEventListener('input',()=>{if(filterNode)filterNode.Q.setValueAtTime(filterQ.value,audioCtx.currentTime);});
+        reverbChk.addEventListener('change',()=>{if(isPlaying){convolverNode.disconnect();convolverNode=reverbChk.checked?createReverb(parseFloat(reverbTime.value)):audioCtx.createGain();distortionNode.connect(convolverNode);convolverNode.connect(gainNode);}});
+        reverbTime.addEventListener('input',()=>{if(convolverNode && reverbChk.checked){convolverNode.buffer=createReverb(parseFloat(reverbTime.value)).buffer;}});
+        distChk.addEventListener('change',()=>{if(isPlaying){distortionNode.disconnect();distortionNode=distChk.checked?createDistortion(distDrive.value/10):audioCtx.createGain();filterNode.connect(distortionNode);distortionNode.connect(convolverNode);}});
+        distDrive.addEventListener('input',()=>{if(distortionNode && distChk.checked){distortionNode.curve=createDistortion(distDrive.value/10).curve;}});
+        reverbChk.addEventListener('change',()=>{reverbLabel.style.display=reverbChk.checked?'block':'none';});
+        distChk.addEventListener('change',()=>{distLabel.style.display=distChk.checked?'block':'none';});
+
+        /* Sound profiles */
+        document.querySelectorAll('.sound-item').forEach(item=>{
+            item.addEventListener('click',()=>{
+                const preset=item.dataset.preset;
+                if(preset==='piano'){
+                    waveform.value='sine';frequency.value=440;amplitude.value=0.5;filterType.value='lowpass';filterFreq.value=1500;filterQ.value=1;reverbChk.checked=true;reverbTime.value=1.2;distChk.checked=false;
+                }else if(preset==='synth'){
+                    waveform.value='sawtooth';frequency.value=220;amplitude.value=0.4;filterType.value='bandpass';filterFreq.value=800;filterQ.value=5;reverbChk.checked=false;distChk.checked=true;distDrive.value=50;
+                }else if(preset==='bici'){
+                    waveform.value='square';frequency.value=120;amplitude.value=0.7;filterType.value='highpass';filterFreq.value=500;filterQ.value=8;reverbChk.checked=false;distChk.checked=true;distDrive.value=70;
+                }else if(preset==='ambient'){
+                    waveform.value='triangle';frequency.value=300;amplitude.value=0.3;filterType.value='lowpass';filterFreq.value=1000;filterQ.value=1;reverbChk.checked=true;reverbTime.value=2.5;distChk.checked=false;
+                }
+                reverbLabel.style.display=reverbChk.checked?'block':'none';
+                distLabel.style.display=distChk.checked?'block':'none';
+                if(isPlaying)stopAudio();
+                startAudio();
+            });
+        });
+
+        /* Contact form */
+        const contactForm=document.getElementById('contact-form');
+        const thankyou=document.getElementById('thankyou');
+        contactForm.addEventListener('submit',e=>{e.preventDefault();thankyou.style.display='block';togglePulse(contactForm.querySelector('button'));});
+        function togglePulse(btn){btn.classList.add('pulse');setTimeout(()=>btn.classList.remove('pulse'),500);}
+    });
     </script>
 </head>
 <body>
     <div id="sidebar">
         <div id="close-btn">× Zavřít</div>
-        <h2>Název Hry</h2>
+        <div class="logo">
+            <svg width="24" height="24" viewBox="0 0 24 24"><path d="M3 10v4h2l3 3V7l-3 3H3zm13.5-5c-1.74 0-3.41.81-4.5 2.09V17.9c1.09 1.28 2.76 2.1 4.5 2.1 3.31 0 6-2.69 6-6s-2.69-6-6-6z"/></svg>
+            Akustický Simulátor
+        </div>
         <nav>
-            <a href="#about">O hře</a>
-            <a href="#gallery">Galerie</a>
+            <a href="#home">Domů</a>
+            <a href="#simulator">Simulátor</a>
+            <a href="#gallery">Galerie zvuků</a>
             <a href="#contact">Kontakt</a>
         </nav>
-        <div class="social">
-            <svg viewBox="0 0 24 24"><path d="M22.46 6c-.77.35-1.6.58-2.46.69a4.2 4.2 0 001.85-2.31 8.3 8.3 0 01-2.64 1A4.15 4.15 0 0016.11 4c-2.34 0-4.23 1.9-4.23 4.24 0 .33.04.65.1.96-3.52-.18-6.65-1.86-8.74-4.42a4.28 4.28 0 00-.57 2.14 4.25 4.25 0 001.89 3.54 4.16 4.16 0 01-1.92-.53v.05c0 2.07 1.47 3.8 3.42 4.19a4.2 4.2 0 01-1.9.07 4.23 4.23 0 003.95 2.94A8.34 8.34 0 012 19.54a11.77 11.77 0 006.29 1.84c7.55 0 11.68-6.26 11.68-11.68 0-.18 0-.35-.01-.53A8.36 8.36 0 0024 6.6a8.2 8.2 0 01-2.54.7z"/></svg>
-            <svg viewBox="0 0 24 24"><path d="M12 2.04c-5.5 0-9.96 4.46-9.96 9.96 0 4.4 3.6 8.06 8.21 8.96v-6.34H7.9v-2.62h2.35V9.58c0-2.3 1.37-3.58 3.47-3.58.99 0 2.03.18 2.03.18v2.22h-1.14c-1.12 0-1.47.69-1.47 1.39v1.67h2.5l-.4 2.62h-2.1v6.34c4.6-.9 8.2-4.56 8.2-8.96 0-5.5-4.46-9.96-9.96-9.96z"/></svg>
-            <svg viewBox="0 0 24 24"><path d="M21 21h-4.5v-6c0-1.43-.03-3.27-2-3.27-2 0-2.3 1.57-2.3 3.17V21H8V9h4.3v1.64h.06c.6-1.1 2-2.26 4.09-2.26 4.37 0 5.18 2.88 5.18 6.62V21zM5 8H1V9h4v12h3V9h4V8H5z"/></svg>
-        </div>
     </div>
     <div id="overlay"></div>
-    <div id="topbar"><div>Název Hry</div><div id="menu-btn">☰ Menu</div></div>
-    <div class="content">
-        <section class="hero">
-            <h1>Název Tvé Hry</h1>
-            <p>Krátký chytlavý slogan</p>
-            <a href="game.html" class="cta">Spustit hru</a>
+    <div id="topbar"><div id="menu-btn">☰ Menu</div></div>
+    <div class="main">
+        <section id="home" class="hero">
+            <h1>Akustický Inovativní Simulátor</h1>
+            <p>Objev svět vlnění a frekvencí</p>
+            <a href="#simulator" class="cta">Začít simulaci</a>
         </section>
-        <section id="about">
-            <h2>O hře</h2>
-            <div class="features">
-                <div class="feature">
-                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>
-                    <p>2D akce</p>
-                </div>
-                <div class="feature">
-                    <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16"/></svg>
-                    <p>Zvukové efekty</p>
-                </div>
-                <div class="feature">
-                    <svg viewBox="0 0 24 24"><polygon points="12,2 22,22 2,22"/></svg>
-                    <p>Unikátní grafika</p>
-                </div>
+        <section id="simulator">
+            <h2>Simulátor</h2>
+            <canvas id="oscilloscope" width="600" height="200"></canvas>
+            <canvas id="spectrum" width="600" height="200"></canvas>
+            <div class="controls">
+                <label>Vlnová forma<select id="waveform"><option value="sine">Sinus</option><option value="square">Square</option><option value="sawtooth">Sawtooth</option><option value="triangle">Triangle</option></select></label>
+                <label>Frekvence (Hz)<input type="range" id="frequency" min="20" max="2000" value="440"></label>
+                <label>Amplituda<input type="range" id="amplitude" min="0" max="1" step="0.01" value="0.5"></label>
+                <label>Typ filtru<select id="filterType"><option value="lowpass">Lowpass</option><option value="highpass">Highpass</option><option value="bandpass">Bandpass</option></select></label>
+                <label>Frekvence filtru (Hz)<input type="range" id="filterFreq" min="20" max="5000" value="1000"></label>
+                <label>Q faktor<input type="range" id="filterQ" min="0.1" max="20" step="0.1" value="1"></label>
+                <label><input type="checkbox" id="reverb">Přidat ozvěnu (Reverb)</label>
+                <label id="reverbLabel" style="display:none">Doba dozvuku (s)<input type="range" id="reverbTime" min="0.1" max="3" step="0.1" value="1"></label>
+                <label><input type="checkbox" id="distortion">Přidat distortion</label>
+                <label id="distLabel" style="display:none">Drive<input type="range" id="distortionDrive" min="0" max="100" value="0"></label>
             </div>
+            <button id="toggleSound">Spustit zvuk</button>
         </section>
         <section id="gallery">
-            <h2>Galerie</h2>
-            <div class="grid">
-                <div class="grid-item">
-                    <img src="https://via.placeholder.com/400x250?text=Level+1" alt="level1"/>
-                    <div class="label">Úroveň 1</div>
-                </div>
-                <div class="grid-item">
-                    <img src="https://via.placeholder.com/400x250?text=Level+2" alt="level2"/>
-                    <div class="label">Úroveň 2</div>
-                </div>
-                <div class="grid-item">
-                    <img src="https://via.placeholder.com/400x250?text=Level+3" alt="level3"/>
-                    <div class="label">Úroveň 3</div>
-                </div>
-                <div class="grid-item">
-                    <img src="https://via.placeholder.com/400x250?text=Level+4" alt="level4"/>
-                    <div class="label">Úroveň 4</div>
-                </div>
+            <h2>Galerie zvuků</h2>
+            <div class="sound-grid">
+                <div class="sound-item" data-preset="piano" data-label="Piano">Piano</div>
+                <div class="sound-item" data-preset="synth" data-label="Synth">Synth</div>
+                <div class="sound-item" data-preset="bici" data-label="Bicí">Bicí</div>
+                <div class="sound-item" data-preset="ambient" data-label="Ambient">Ambient</div>
             </div>
         </section>
         <section id="contact">
             <h2>Kontakt</h2>
-            <form>
-                <input type="text" placeholder="Jméno" required>
-                <input type="email" placeholder="Email" required>
+            <form id="contact-form">
+                <label for="name">Jméno</label>
+                <input type="text" id="name" name="name" placeholder="Tvé jméno">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="example@domena.cz">
+                <label for="message">Zpráva</label>
+                <textarea id="message" name="message" rows="4" placeholder="Napiš nám dotaz…"></textarea>
                 <button type="submit">Odeslat</button>
             </form>
-            <div class="links">
-                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm1-13h-2v6h2V7zm0 8h-2v2h2v-2z"/></svg>
-                <svg viewBox="0 0 24 24"><path d="M10.9 2.1c-4.86 0-8.8 3.94-8.8 8.8 0 3.89 2.52 7.18 6.02 8.27.44.08.6-.19.6-.42v-1.48c-2.45.53-2.96-1.18-2.96-1.18-.4-1.02-.98-1.29-.98-1.29-.8-.55.06-.54.06-.54.89.06 1.35.92 1.35.92.79 1.34 2.07.95 2.58.73.08-.57.31-.95.56-1.17-1.95-.22-4-1-4-4.44 0-.98.35-1.78.92-2.4-.09-.23-.4-1.15.09-2.39 0 0 .74-.24 2.42.92.7-.19 1.46-.28 2.21-.28s1.51.09 2.21.28c1.68-1.16 2.42-.92 2.42-.92.49 1.24.18 2.16.09 2.39.57.62.92 1.42.92 2.4 0 3.45-2.05 4.22-4 4.44.32.28.6.82.6 1.66v2.46c0 .23.16.5.6.42a8.81 8.81 0 006.01-8.27c0-4.86-3.94-8.8-8.8-8.8z"/></svg>
-                <svg viewBox="0 0 24 24"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.09 3.29 9.42 7.87 10.95.58.11.79-.25.79-.55v-1.94c-3.21.7-3.88-1.55-3.88-1.55-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.02 1.75 2.68 1.25 3.33.95.1-.74.4-1.25.72-1.54-2.56-.29-5.27-1.28-5.27-5.73 0-1.27.46-2.3 1.21-3.11-.12-.3-.53-1.53.1-3.18 0 0 1-.32 3.3 1.19a11.34 11.34 0 016 0c2.3-1.5 3.3-1.19 3.3-1.19.63 1.65.22 2.88.1 3.18.76.81 1.22 1.84 1.22 3.11 0 4.46-2.72 5.43-5.3 5.71.41.36.78 1.1.78 2.22v3.29c0 .3.2.66.8.55A10.52 10.52 0 0023.5 12c0-6.35-5.15-11.5-11.5-11.5z"/></svg>
-            </div>
+            <div id="thankyou">Děkujeme! Ozveme se brzy.</div>
         </section>
         <footer>
-            &copy; 2025 Tvé Jméno. Všechna práva vyhrazena. | <a href="https://github.com/tuv-repo" target="_blank">GitHub</a>
+            &copy; 2025 Tvé Jméno. Inovativní akustický simulátor. |
+            <a href="https://github.com/tvuj-repo" target="_blank">GitHub</a>
+            <svg viewBox="0 0 24 24"><path d="M22.46 6c-.77.35-1.6.58-2.46.69a4.2 4.2 0 001.85-2.31 8.3 8.3 0 01-2.64 1A4.15 4.15 0 0016.11 4c-2.34 0-4.23 1.9-4.23 4.24 0 .33.04.65.1.96-3.52-.18-6.65-1.86-8.74-4.42a4.28 4.28 0 00-.57 2.14 4.25 4.25 0 001.89 3.54 4.16 4.16 0 01-1.92-.53v.05c0 2.07 1.47 3.8 3.42 4.19a4.2 4.2 0 01-1.9.07 4.23 4.23 0 003.95 2.94A8.34 8.34 0 012 19.54a11.77 11.77 0 006.29 1.84c7.55 0 11.68-6.26 11.68-11.68 0-.18 0-.35-.01-.53A8.36 8.36 0 0024 6.6a8.2 8.2 0 01-2.54.7z"/></svg>
         </footer>
     </div>
 </body>
