@@ -1,0 +1,26 @@
+version: '3'
+services:
+  mongo:
+    image: mongo
+    volumes:
+      - mongo-data:/data/db
+  backend:
+    build: .
+    environment:
+      - MONGODB_URI=mongodb://mongo/ais
+      - JWT_SECRET=secret
+      - PORT=4000
+    ports:
+      - "4000:4000"
+    depends_on:
+      - mongo
+  frontend:
+    build:
+      context: frontend/app
+      dockerfile: ../../Dockerfile.frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+volumes:
+  mongo-data:
