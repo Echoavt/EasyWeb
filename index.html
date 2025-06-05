@@ -3,378 +3,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ffffff" id="theme-color">
     <title>Akustický Inovativní Simulátor</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
-        /* Resets */
-        *{margin:0;padding:0;box-sizing:border-box;}
-        html{scroll-behavior:smooth;}
-        body{
-            font-family:'Roboto', sans-serif;
-            background:#f9fafb;
-            color:#333;
-            display:flex;
-        }
-        /* Sidebar */
-        #sidebar{
-            width:250px;
-            background:#fff;
-            position:fixed;
-            top:0;left:0;bottom:0;
-            padding:1rem;
-            transform:translateX(0);
-            transition:transform 0.3s ease-in-out;
-            z-index:1000;
-            box-shadow:2px 0 5px rgba(0,0,0,0.1);
-        }
-        #sidebar .logo{
-            display:flex;
-            align-items:center;
-            gap:0.5rem;
-            margin-bottom:2rem;
-            color:#1e3a8a;
-            font-weight:700;
-        }
-        #sidebar nav a{
-            display:block;
-            padding:0.5rem 0;
-            text-decoration:none;
-            color:#333;
-            transition:color 0.3s;
-            position:relative;
-        }
-        #sidebar nav a::after{
-            content:"";
-            position:absolute;
-            left:0;bottom:0;
-            width:0;height:2px;
-            background:#10b981;
-            transition:width 0.3s;
-        }
-        #sidebar nav a:hover{color:#10b981;}
-        #sidebar nav a:hover::after{width:100%;}
-        #close-btn{display:none;font-size:1.5rem;margin-bottom:1rem;cursor:pointer;color:#10b981;}
-        /* Overlay */
-        #overlay{
-            position:fixed;inset:0;
-            background:rgba(0,0,0,0.4);
-            opacity:0;visibility:hidden;
-            transition:opacity 0.3s;
-            z-index:900;
-        }
-        #overlay.active{opacity:1;visibility:visible;}
-        /* Topbar */
-        #topbar{
-            display:none;
-            position:fixed;top:0;left:0;right:0;
-            background:#fff;
-            padding:0.5rem 1rem;
-            box-shadow:0 2px 5px rgba(0,0,0,0.1);
-            justify-content:space-between;
-            align-items:center;
-            z-index:950;
-        }
-        #menu-btn{font-size:1.5rem;cursor:pointer;color:#1e3a8a;}
-        /* Main */
-        .main{flex:1;margin-left:250px;}
-        @media(max-width:768px){
-            #sidebar{transform:translateX(-100%);}
-            #sidebar.open{transform:translateX(0);}
-            #close-btn{display:block;}
-            .main{margin-left:0;}
-            #topbar{display:flex;}
-        }
-        /* Hero */
-        .hero{height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;color:#fff;position:relative;overflow:hidden;}
-        @keyframes gradientMove{0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
-        .hero::before{content:"";position:absolute;inset:0;background:linear-gradient(-45deg,#1e3a8a,#60a5fa,#10b981,#60a5fa);background-size:400% 400%;animation:gradientMove 15s ease infinite;z-index:-1;}
-        .hero h1{font-size:3rem;margin-bottom:1rem;opacity:0;transform:translateY(20px);transition:all 1s ease 0.3s;}
-        .hero p{font-size:1.3rem;opacity:0;transform:translateY(20px);transition:all 1s ease 0.6s;}
-        .hero .cta{margin-top:2rem;padding:1rem 2rem;font-size:1.2rem;background:#10b981;color:#fff;border:none;border-radius:5px;cursor:pointer;opacity:0;transform:translateY(-20px);transition:background 0.3s,box-shadow 0.3s,transform 0.5s ease 0.9s,opacity 0.5s ease 0.9s;}
-        .hero .cta:hover{background:#059669;box-shadow:0 4px 8px rgba(0,0,0,0.3);}
-        .hero.loaded h1,.hero.loaded p,.hero.loaded .cta{opacity:1;transform:translateY(0);}
-        .hero.loaded .cta{animation:pulse 2s infinite 2s;}
-        @keyframes pulse{0%{transform:scale(1);}50%{transform:scale(1.05);}100%{transform:scale(1);}}
-        /* Simulator Section */
-        #simulator{padding:4rem 1rem;max-width:1000px;margin:0 auto;text-align:center;}
-        #simulator canvas{background:#000;border-radius:4px;max-width:100%;margin-bottom:1rem;}
-        .controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin:2rem 0;text-align:left;}
-        .controls label{display:flex;flex-direction:column;font-weight:700;}
-        .controls input[type="range"],.controls select{margin-top:0.5rem;}
-        .controls input[type="checkbox"]{margin-right:0.5rem;}
-        #toggleSound{padding:1rem 2rem;font-size:1.2rem;background:#1e3a8a;color:#fff;border:none;border-radius:5px;cursor:pointer;transition:background 0.3s;}
-        #toggleSound.active{background:#10b981;}
-        /* Gallery */
-        #gallery{padding:4rem 1rem;max-width:1000px;margin:0 auto;}
-        .sound-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;}
-        .sound-item{position:relative;background:#60a5fa;color:#fff;border-radius:8px;display:flex;justify-content:center;align-items:center;height:150px;cursor:pointer;overflow:hidden;transition:transform 0.3s,box-shadow 0.3s;}
-        .sound-item:hover{transform:scale(1.05);box-shadow:0 4px 8px rgba(0,0,0,0.3);}
-        .sound-item::after{content:attr(data-label);position:absolute;inset:0;background:rgba(0,0,0,0.5);display:flex;justify-content:center;align-items:center;font-size:1.2rem;opacity:0;transition:opacity 0.3s;}
-        .sound-item:hover::after{opacity:1;}
-        @media(max-width:768px){.sound-grid{grid-template-columns:1fr;}}
-        /* Contact */
-        #contact{padding:4rem 1rem;max-width:600px;margin:0 auto;text-align:center;}
-        #contact-form{display:flex;flex-direction:column;gap:1rem;}
-        #contact-form input,#contact-form textarea{padding:0.5rem;border:1px solid #ccc;border-radius:4px;font-family:'Roboto',sans-serif;}
-        #contact-form button{padding:0.75rem;background:#1e3a8a;color:#fff;border:none;border-radius:4px;cursor:pointer;transition:background 0.3s;}
-        #contact-form button:hover{background:#162b5c;}
-        #thankyou{display:none;margin-top:1rem;font-weight:700;color:#10b981;}
-        /* Footer */
-        footer{background:#1e3a8a;color:#fff;text-align:center;padding:1rem 0;}
-        footer a{color:#60a5fa;text-decoration:none;}
-        footer svg{width:20px;height:20px;fill:#60a5fa;margin-left:0.5rem;transition:fill 0.3s;vertical-align:middle;}
-        footer svg:hover{fill:#10b981;}
-    </style>
-    <script>
-    document.addEventListener('DOMContentLoaded',()=>{
-        const sidebar=document.getElementById('sidebar');
-        const overlay=document.getElementById('overlay');
-        const menuBtn=document.getElementById('menu-btn');
-        const closeBtn=document.getElementById('close-btn');
-        const hero=document.querySelector('.hero');
-        hero.classList.add('loaded');
-        menuBtn.addEventListener('click',()=>{sidebar.classList.add('open');overlay.classList.add('active');});
-        closeBtn.addEventListener('click',()=>{sidebar.classList.remove('open');overlay.classList.remove('active');});
-        overlay.addEventListener('click',()=>{sidebar.classList.remove('open');overlay.classList.remove('active');});
-        document.querySelectorAll('#sidebar a').forEach(a=>{
-            a.addEventListener('click',e=>{e.preventDefault();document.querySelector(a.getAttribute('href')).scrollIntoView({behavior:'smooth'});sidebar.classList.remove('open');overlay.classList.remove('active');});
-        });
-        const startLink=document.querySelector('.cta');
-        startLink.addEventListener('click',e=>{e.preventDefault();document.querySelector('#simulator').scrollIntoView({behavior:'smooth'});});
-
-        /* Audio setup */
-        let audioCtx;let oscillator;let gainNode;let filterNode;let convolverNode;let distortionNode;let analyserTime;let analyserFreq;let animationId;let isPlaying=false;
-        const oscCanvas=document.getElementById('oscilloscope');
-        const oscCtx=oscCanvas.getContext('2d');
-        const specCanvas=document.getElementById('spectrum');
-        const specCtx=specCanvas.getContext('2d');
-        const waveform=document.getElementById('waveform');
-        const frequency=document.getElementById('frequency');
-        const amplitude=document.getElementById('amplitude');
-        const filterType=document.getElementById('filterType');
-        const filterFreq=document.getElementById('filterFreq');
-        const filterQ=document.getElementById('filterQ');
-        const reverbChk=document.getElementById('reverb');
-        const reverbTime=document.getElementById('reverbTime');
-        const reverbLabel=document.getElementById('reverbLabel');
-        const distChk=document.getElementById('distortion');
-        const distDrive=document.getElementById('distortionDrive');
-        const distLabel=document.getElementById('distLabel');
-        const toggleBtn=document.getElementById('toggleSound');
-
-        function createReverb(time){
-            const convolver=audioCtx.createConvolver();
-            const rate=audioCtx.sampleRate;
-            const length=rate*time;
-            const impulse=audioCtx.createBuffer(2,length,rate);
-            for(let c=0;c<2;c++){
-                const channel=impulse.getChannelData(c);
-                for(let i=0;i<length;i++){
-                    channel[i]=(Math.random()*2-1)*Math.pow(1-i/length,2);
-                }
-            }
-            convolver.buffer=impulse;
-            return convolver;
-        }
-        function createDistortion(amount){
-            const wave=audioCtx.createWaveShaper();
-            const curve=new Float32Array(44100);
-            for(let i=0;i<curve.length;i++){
-                const x=i*2/curve.length-1;
-                curve[i]=Math.tanh(x*amount);
-            }
-            wave.curve=curve;wave.oversample='4x';
-            return wave;
-        }
-        function connect(){
-            analyserTime=audioCtx.createAnalyser();
-            analyserTime.fftSize=2048;
-            analyserFreq=audioCtx.createAnalyser();
-            analyserFreq.fftSize=256;
-            oscillator.connect(filterNode);
-            filterNode.connect(distortionNode);
-            distortionNode.connect(convolverNode);
-            convolverNode.connect(gainNode);
-            gainNode.connect(analyserTime);
-            analyserTime.connect(analyserFreq);
-            analyserFreq.connect(audioCtx.destination);
-        }
-        function startAudio(){
-            if(!audioCtx)audioCtx=new (window.AudioContext||window.webkitAudioContext)();
-            oscillator=audioCtx.createOscillator();
-            gainNode=audioCtx.createGain();
-            filterNode=audioCtx.createBiquadFilter();
-            convolverNode=reverbChk.checked?createReverb(parseFloat(reverbTime.value)):audioCtx.createGain();
-            distortionNode=distChk.checked?createDistortion(parseFloat(distDrive.value)/10):audioCtx.createGain();
-            oscillator.type=waveform.value;
-            oscillator.frequency.value=frequency.value;
-            gainNode.gain.value=amplitude.value;
-            filterNode.type=filterType.value;
-            filterNode.frequency.value=filterFreq.value;
-            filterNode.Q.value=filterQ.value;
-            connect();
-            oscillator.start();
-            isPlaying=true;
-            toggleBtn.textContent='Zastavit zvuk';
-            toggleBtn.classList.add('active');
-            draw();
-        }
-        function stopAudio(){
-            if(!isPlaying)return;
-            oscillator.stop();
-            oscillator.disconnect();
-            gainNode.disconnect();
-            filterNode.disconnect();
-            convolverNode.disconnect();
-            distortionNode.disconnect();
-            analyserTime.disconnect();
-            analyserFreq.disconnect();
-            cancelAnimationFrame(animationId);
-            oscCtx.clearRect(0,0,oscCanvas.width,oscCanvas.height);
-            specCtx.clearRect(0,0,specCanvas.width,specCanvas.height);
-            isPlaying=false;
-            toggleBtn.textContent='Spustit zvuk';
-            toggleBtn.classList.remove('active');
-        }
-        function draw(){
-            const bufferLength=analyserTime.fftSize;
-            const dataArray=new Uint8Array(bufferLength);
-            const freqLength=analyserFreq.frequencyBinCount;
-            const freqArray=new Uint8Array(freqLength);
-            function loop(){
-                animationId=requestAnimationFrame(loop);
-                analyserTime.getByteTimeDomainData(dataArray);
-                oscCtx.fillStyle='#000';oscCtx.fillRect(0,0,oscCanvas.width,oscCanvas.height);
-                oscCtx.lineWidth=2;oscCtx.strokeStyle='#60a5fa';oscCtx.beginPath();
-                let slice=oscCanvas.width/bufferLength;let x=0;
-                for(let i=0;i<bufferLength;i++){
-                    let v=dataArray[i]/128.0;let y=v*oscCanvas.height/2;
-                    if(i===0)oscCtx.moveTo(x,y);else oscCtx.lineTo(x,y);
-                    x+=slice;
-                }
-                oscCtx.lineTo(oscCanvas.width,oscCanvas.height/2);oscCtx.stroke();
-                analyserFreq.getByteFrequencyData(freqArray);
-                specCtx.fillStyle='#000';specCtx.fillRect(0,0,specCanvas.width,specCanvas.height);
-                let barWidth=(specCanvas.width/freqLength)*1.5;let bx=0;
-                for(let i=0;i<freqLength;i++){
-                    let bh=freqArray[i]/255*specCanvas.height;
-                    let hue=210-bh/specCanvas.height*210;
-                    specCtx.fillStyle=`hsl(${hue},70%,50%)`;
-                    specCtx.fillRect(bx,specCanvas.height-bh,barWidth,bh);
-                    bx+=barWidth+1;
-                }
-            }
-            loop();
-        }
-        toggleBtn.addEventListener('click',()=>{isPlaying?stopAudio():startAudio();});
-        waveform.addEventListener('change',()=>{if(oscillator)oscillator.type=waveform.value;});
-        frequency.addEventListener('input',()=>{if(oscillator)oscillator.frequency.setValueAtTime(frequency.value,audioCtx.currentTime);});
-        amplitude.addEventListener('input',()=>{if(gainNode)gainNode.gain.setValueAtTime(amplitude.value,audioCtx.currentTime);});
-        filterType.addEventListener('change',()=>{if(filterNode)filterNode.type=filterType.value;});
-        filterFreq.addEventListener('input',()=>{if(filterNode)filterNode.frequency.setValueAtTime(filterFreq.value,audioCtx.currentTime);});
-        filterQ.addEventListener('input',()=>{if(filterNode)filterNode.Q.setValueAtTime(filterQ.value,audioCtx.currentTime);});
-        reverbChk.addEventListener('change',()=>{if(isPlaying){convolverNode.disconnect();convolverNode=reverbChk.checked?createReverb(parseFloat(reverbTime.value)):audioCtx.createGain();distortionNode.connect(convolverNode);convolverNode.connect(gainNode);}});
-        reverbTime.addEventListener('input',()=>{if(convolverNode && reverbChk.checked){convolverNode.buffer=createReverb(parseFloat(reverbTime.value)).buffer;}});
-        distChk.addEventListener('change',()=>{if(isPlaying){distortionNode.disconnect();distortionNode=distChk.checked?createDistortion(distDrive.value/10):audioCtx.createGain();filterNode.connect(distortionNode);distortionNode.connect(convolverNode);}});
-        distDrive.addEventListener('input',()=>{if(distortionNode && distChk.checked){distortionNode.curve=createDistortion(distDrive.value/10).curve;}});
-        reverbChk.addEventListener('change',()=>{reverbLabel.style.display=reverbChk.checked?'block':'none';});
-        distChk.addEventListener('change',()=>{distLabel.style.display=distChk.checked?'block':'none';});
-
-        /* Sound profiles */
-        document.querySelectorAll('.sound-item').forEach(item=>{
-            item.addEventListener('click',()=>{
-                const preset=item.dataset.preset;
-                if(preset==='piano'){
-                    waveform.value='sine';frequency.value=440;amplitude.value=0.5;filterType.value='lowpass';filterFreq.value=1500;filterQ.value=1;reverbChk.checked=true;reverbTime.value=1.2;distChk.checked=false;
-                }else if(preset==='synth'){
-                    waveform.value='sawtooth';frequency.value=220;amplitude.value=0.4;filterType.value='bandpass';filterFreq.value=800;filterQ.value=5;reverbChk.checked=false;distChk.checked=true;distDrive.value=50;
-                }else if(preset==='bici'){
-                    waveform.value='square';frequency.value=120;amplitude.value=0.7;filterType.value='highpass';filterFreq.value=500;filterQ.value=8;reverbChk.checked=false;distChk.checked=true;distDrive.value=70;
-                }else if(preset==='ambient'){
-                    waveform.value='triangle';frequency.value=300;amplitude.value=0.3;filterType.value='lowpass';filterFreq.value=1000;filterQ.value=1;reverbChk.checked=true;reverbTime.value=2.5;distChk.checked=false;
-                }
-                reverbLabel.style.display=reverbChk.checked?'block':'none';
-                distLabel.style.display=distChk.checked?'block':'none';
-                if(isPlaying)stopAudio();
-                startAudio();
-            });
-        });
-
-        /* Contact form */
-        const contactForm=document.getElementById('contact-form');
-        const thankyou=document.getElementById('thankyou');
-        contactForm.addEventListener('submit',e=>{e.preventDefault();thankyou.style.display='block';togglePulse(contactForm.querySelector('button'));});
-        function togglePulse(btn){btn.classList.add('pulse');setTimeout(()=>btn.classList.remove('pulse'),500);}
-    });
-    </script>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="sidebar">
-        <div id="close-btn">× Zavřít</div>
-        <div class="logo">
-            <svg width="24" height="24" viewBox="0 0 24 24"><path d="M3 10v4h2l3 3V7l-3 3H3zm13.5-5c-1.74 0-3.41.81-4.5 2.09V17.9c1.09 1.28 2.76 2.1 4.5 2.1 3.31 0 6-2.69 6-6s-2.69-6-6-6z"/></svg>
-            Akustický Simulátor
-        </div>
+    <div id="preloader" class="spinner"></div>
+    <header id="topbar">
+        <div id="menu-btn" aria-label="Menu" tabindex="0">☰</div>
+        <div class="spacer"></div>
+        <div id="theme-toggle" aria-label="Přepnout režim" tabindex="0">🌙</div>
+        <select id="lang-select" aria-label="Jazyk">
+            <option value="cs">Čeština</option>
+            <option value="en">English</option>
+        </select>
+    </header>
+    <aside id="sidebar">
+        <div class="logo"><svg viewBox="0 0 24 24" width="24" height="24"><path d="M3 10v4h2l3 3V7l-3 3H3zm13.5-5c-1.74 0-3.41.81-4.5 2.09V17.9c1.09 1.28 2.76 2.1 4.5 2.1 3.31 0 6-2.69 6-6s-2.69-6-6-6z"/></svg> <span>Akustický Simulátor</span></div>
         <nav>
-            <a href="#home">Domů</a>
+            <a href="#home" class="active">Dashboard</a>
             <a href="#simulator">Simulátor</a>
             <a href="#gallery">Galerie zvuků</a>
             <a href="#contact">Kontakt</a>
+            <a href="#help">Nápověda</a>
         </nav>
-    </div>
+    </aside>
     <div id="overlay"></div>
-    <div id="topbar"><div id="menu-btn">☰ Menu</div></div>
-    <div class="main">
+    <main class="main">
         <section id="home" class="hero">
-            <h1>Akustický Inovativní Simulátor</h1>
-            <p>Objev svět vlnění a frekvencí</p>
-            <a href="#simulator" class="cta">Začít simulaci</a>
+            <h1 data-i18n="title">Akustický Inovativní Simulátor</h1>
+            <p data-i18n="subtitle">Objev svět vlnění a frekvencí</p>
+            <button id="startBtn" class="cta" data-i18n="start">Začít simulaci</button>
         </section>
         <section id="simulator">
-            <h2>Simulátor</h2>
-            <canvas id="oscilloscope" width="600" height="200"></canvas>
-            <canvas id="spectrum" width="600" height="200"></canvas>
+            <h2 data-i18n="simTitle">Simulátor</h2>
+            <canvas id="oscilloscope" width="600" height="200" aria-label="Osciloskop"></canvas>
+            <canvas id="spectrum" width="600" height="200" aria-label="Spektrum"></canvas>
+            <canvas id="vibration" width="600" height="200" aria-label="Vibrace"></canvas>
             <div class="controls">
-                <label>Vlnová forma<select id="waveform"><option value="sine">Sinus</option><option value="square">Square</option><option value="sawtooth">Sawtooth</option><option value="triangle">Triangle</option></select></label>
-                <label>Frekvence (Hz)<input type="range" id="frequency" min="20" max="2000" value="440"></label>
-                <label>Amplituda<input type="range" id="amplitude" min="0" max="1" step="0.01" value="0.5"></label>
-                <label>Typ filtru<select id="filterType"><option value="lowpass">Lowpass</option><option value="highpass">Highpass</option><option value="bandpass">Bandpass</option></select></label>
-                <label>Frekvence filtru (Hz)<input type="range" id="filterFreq" min="20" max="5000" value="1000"></label>
-                <label>Q faktor<input type="range" id="filterQ" min="0.1" max="20" step="0.1" value="1"></label>
-                <label><input type="checkbox" id="reverb">Přidat ozvěnu (Reverb)</label>
-                <label id="reverbLabel" style="display:none">Doba dozvuku (s)<input type="range" id="reverbTime" min="0.1" max="3" step="0.1" value="1"></label>
-                <label><input type="checkbox" id="distortion">Přidat distortion</label>
-                <label id="distLabel" style="display:none">Drive<input type="range" id="distortionDrive" min="0" max="100" value="0"></label>
+                <fieldset>
+                    <legend data-i18n="osc1">Oscilátor 1</legend>
+                    <label> <span data-i18n="waveform">Vlnová forma</span>
+                        <select class="waveform" aria-label="Vlnová forma">
+                            <option value="sine">Sine</option>
+                            <option value="square">Square</option>
+                            <option value="sawtooth">Saw</option>
+                            <option value="triangle">Triangle</option>
+                        </select>
+                    </label>
+                    <label><span data-i18n="freq">Frekvence</span>
+                        <input type="range" class="frequency" min="20" max="2000" value="440" aria-valuemin="20" aria-valuemax="2000" aria-valuenow="440">
+                    </label>
+                    <label><span data-i18n="amp">Amplituda</span>
+                        <input type="range" class="amplitude" min="0" max="1" step="0.01" value="0.5" aria-valuemin="0" aria-valuemax="1" aria-valuenow="0.5">
+                    </label>
+                    <label><input type="checkbox" class="osc-enable" checked> <span data-i18n="enable">Zapnout</span></label>
+                </fieldset>
+                <fieldset>
+                    <legend data-i18n="osc2">Oscilátor 2</legend>
+                    <label><span data-i18n="waveform">Vlnová forma</span>
+                        <select class="waveform">
+                            <option value="sine">Sine</option>
+                            <option value="square">Square</option>
+                            <option value="sawtooth">Saw</option>
+                            <option value="triangle">Triangle</option>
+                        </select>
+                    </label>
+                    <label><span data-i18n="freq">Frekvence</span>
+                        <input type="range" class="frequency" min="20" max="2000" value="660">
+                    </label>
+                    <label><span data-i18n="amp">Amplituda</span>
+                        <input type="range" class="amplitude" min="0" max="1" step="0.01" value="0.3">
+                    </label>
+                    <label><input type="checkbox" class="osc-enable" checked> <span data-i18n="enable">Zapnout</span></label>
+                </fieldset>
+                <fieldset>
+                    <legend data-i18n="osc3">Oscilátor 3</legend>
+                    <label><span data-i18n="waveform">Vlnová forma</span>
+                        <select class="waveform">
+                            <option value="sine">Sine</option>
+                            <option value="square">Square</option>
+                            <option value="sawtooth">Saw</option>
+                            <option value="triangle">Triangle</option>
+                        </select>
+                    </label>
+                    <label><span data-i18n="freq">Frekvence</span>
+                        <input type="range" class="frequency" min="20" max="2000" value="880">
+                    </label>
+                    <label><span data-i18n="amp">Amplituda</span>
+                        <input type="range" class="amplitude" min="0" max="1" step="0.01" value="0.2">
+                    </label>
+                    <label><input type="checkbox" class="osc-enable"> <span data-i18n="enable">Zapnout</span></label>
+                </fieldset>
+                <div class="master">
+                    <label><span data-i18n="tuning">Ladění A4</span>
+                        <input type="range" id="masterTune" min="430" max="450" value="440">
+                    </label>
+                    <p id="currentNote">A4</p>
+                </div>
+                <div class="filter">
+                    <label><span data-i18n="filter">Filtr</span>
+                        <select id="filterType">
+                            <option value="lowpass">Lowpass</option>
+                            <option value="highpass">Highpass</option>
+                            <option value="bandpass">Bandpass</option>
+                            <option value="notch">Notch</option>
+                            <option value="peaking">Peaking</option>
+                        </select>
+                    </label>
+                    <label><span data-i18n="filterFreq">Frekvence filtru</span>
+                        <input type="range" id="filterFreq" min="20" max="5000" value="1000">
+                    </label>
+                    <label><span data-i18n="filterQ">Q faktor</span>
+                        <input type="range" id="filterQ" min="0.1" max="20" step="0.1" value="1">
+                    </label>
+                </div>
+                <button id="autoTune" data-i18n="autoTune">Automatické ladění</button>
+                <button id="toggleSound" data-i18n="play">Spustit zvuk</button>
             </div>
-            <button id="toggleSound">Spustit zvuk</button>
         </section>
         <section id="gallery">
-            <h2>Galerie zvuků</h2>
+            <h2 data-i18n="gallery">Galerie zvuků</h2>
             <div class="sound-grid">
-                <div class="sound-item" data-preset="piano" data-label="Piano">Piano</div>
-                <div class="sound-item" data-preset="synth" data-label="Synth">Synth</div>
-                <div class="sound-item" data-preset="bici" data-label="Bicí">Bicí</div>
-                <div class="sound-item" data-preset="ambient" data-label="Ambient">Ambient</div>
+                <div class="sound-item" data-preset="pad">Synth Pad</div>
+                <div class="sound-item" data-preset="bass">Bassline</div>
+                <div class="sound-item" data-preset="drum">Drum Loop</div>
+                <div class="sound-item" data-preset="ambient">Ambient</div>
             </div>
+            <div id="my-samples"></div>
         </section>
         <section id="contact">
-            <h2>Kontakt</h2>
+            <h2 data-i18n="contact">Kontakt</h2>
             <form id="contact-form">
-                <label for="name">Jméno</label>
-                <input type="text" id="name" name="name" placeholder="Tvé jméno">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" placeholder="example@domena.cz">
-                <label for="message">Zpráva</label>
-                <textarea id="message" name="message" rows="4" placeholder="Napiš nám dotaz…"></textarea>
-                <button type="submit">Odeslat</button>
+                <label data-i18n="name">Jméno<input type="text" required></label>
+                <label data-i18n="email">Email<input type="email" required></label>
+                <label data-i18n="message">Zpráva<textarea rows="4" required></textarea></label>
+                <button type="submit" data-i18n="send">Odeslat</button>
             </form>
-            <div id="thankyou">Děkujeme! Ozveme se brzy.</div>
+            <div id="thankyou" class="hidden">Děkujeme! Ozveme se brzy.</div>
         </section>
-        <footer>
-            &copy; 2025 Tvé Jméno. Inovativní akustický simulátor. |
-            <a href="https://github.com/tvuj-repo" target="_blank">GitHub</a>
-            <svg viewBox="0 0 24 24"><path d="M22.46 6c-.77.35-1.6.58-2.46.69a4.2 4.2 0 001.85-2.31 8.3 8.3 0 01-2.64 1A4.15 4.15 0 0016.11 4c-2.34 0-4.23 1.9-4.23 4.24 0 .33.04.65.1.96-3.52-.18-6.65-1.86-8.74-4.42a4.28 4.28 0 00-.57 2.14 4.25 4.25 0 001.89 3.54 4.16 4.16 0 01-1.92-.53v.05c0 2.07 1.47 3.8 3.42 4.19a4.2 4.2 0 01-1.9.07 4.23 4.23 0 003.95 2.94A8.34 8.34 0 012 19.54a11.77 11.77 0 006.29 1.84c7.55 0 11.68-6.26 11.68-11.68 0-.18 0-.35-.01-.53A8.36 8.36 0 0024 6.6a8.2 8.2 0 01-2.54.7z"/></svg>
-        </footer>
+        <section id="help">
+            <h2 data-i18n="help">Nápověda</h2>
+            <p data-i18n="helpText">Základní pokyny pro použití simulátoru...</p>
+        </section>
+    </main>
+    <footer>
+        <p>© 2025 Tvé Jméno. Akustický Inovativní Simulátor.</p>
+        <a href="https://github.com/tvuj-repo" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://github.com/tvuj-repo/issues" target="_blank" rel="noopener">Issues</a>
+        <a href="#" id="coffee">☕</a>
+    </footer>
+    <div id="toast"></div>
+    <div id="tutorial" class="modal hidden">
+        <div class="modal-content">
+            <h3 data-i18n="tutorialTitle">Vítejte!</h3>
+            <ol>
+                <li data-i18n="step1">Vyber vlnovou formu</li>
+                <li data-i18n="step2">Nastav frekvenci</li>
+                <li data-i18n="step3">Klikni na Play</li>
+            </ol>
+            <label><input type="checkbox" id="noTutorial"> <span data-i18n="noShow">Nezobrazovat znovu</span></label>
+            <button id="closeTutorial" data-i18n="close">Zavřít</button>
+        </div>
     </div>
+    <script src="app.js" type="module"></script>
 </body>
 </html>
